@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import Home from './pages/Home'
 import Login from './pages/Login'
 import ClassroomForm from './pages/teacher/createClass'
+import StudentsWork from './pages/teacher/studentsWork'
 import Dashboard from './pages/classroom/Dashboard'
 import Class from './pages/classroom/Class'
 import Profile from './pages/classroom/Profile'
@@ -16,6 +17,7 @@ export default function App() {
         <Route path='/' element={<Home />} />
         <Route path='/login' element={<Login />} />
         <Route path='/create_class' element={<ClassroomForm />} />
+        <Route path='/students_work' element={<StudentsWork />} />
         <Route path='/dashboard' element={<Dashboard />} />
         <Route path='/view_class/:id' element={<Class />} />
         <Route path='/password' element={<Password />} />
