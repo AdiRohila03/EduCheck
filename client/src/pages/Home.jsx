@@ -37,9 +37,9 @@ const Home = () => {
           <div className="w-full lg:w-1/2 text-center lg:text-left">
             <h1 className="text-4xl md:text-5xl font-bold text-blue-900">We offer modern solutions for Online Exam</h1>
             <h2 className="text-xl text-gray-700 mt-4">We use Machine Learning for Exam Paper Evaluation</h2>
-            <ScrollLink to="contact" smooth={true} duration={500} className="mt-6 inline-block bg-blue-700 text-white px-6 py-3 rounded shadow hover:bg-blue-800">
+            <a href="/sign_in" className="mt-6 inline-block bg-blue-700 text-white px-6 py-3 rounded shadow hover:bg-blue-800">
               Get Started
-            </ScrollLink>
+            </a>
           </div>
           <div className="w-full lg:w-1/2 mt-8 lg:mt-0">
             <img src={heroImg} alt="home" className="w-full" />
@@ -94,7 +94,7 @@ const Home = () => {
           <div className="flex flex-col lg:flex-row mt-10 gap-6">
             <div className="w-full lg:w-1/2 bg-gray-100 p-6 rounded shadow-md text-center">
               <h3 className="text-xl font-bold text-blue-900">Address</h3>
-              <p className="text-gray-700">3288, TNHB Colony, Madurai, TamilNadu, India</p>
+              <p className="text-gray-700">3288, TNHB Colony, Parle, Mumbai, India</p>
               <h3 className="text-xl font-bold text-blue-900 mt-4">Call Us</h3>
               <p className="text-gray-700">+91 9789301535</p>
             </div>
