@@ -1,12 +1,14 @@
 import { useState } from "react";
+import logo from "../../assets/img/logo.png";
+
 
 const Header = ({ user, room }) => {
   return (
     <header className="fixed top-0 w-full bg-white shadow-md p-5">
       <div className="container mx-auto flex items-center justify-between">
         <a href="/" className="flex items-center space-x-3">
-          <img src="/assets/img/logo.png" alt="Logo" className="h-10" />
-          <span className="text-2xl font-bold text-primary">EasyExam</span>
+          <img src={logo} alt="Logo" className="h-10" />
+          <span className="text-2xl font-bold text-primary">EduCheck</span>
         </a>
 
         <nav className="flex space-x-6 text-lg">

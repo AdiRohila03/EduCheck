@@ -37,7 +37,7 @@ const Home = () => {
           <div className="w-full lg:w-1/2 text-center lg:text-left">
             <h1 className="text-4xl md:text-5xl font-bold text-blue-900">We offer modern solutions for Online Exam</h1>
             <h2 className="text-xl text-gray-700 mt-4">We use Machine Learning for Exam Paper Evaluation</h2>
-            <a href="/sign_in" className="mt-6 inline-block bg-blue-700 text-white px-6 py-3 rounded shadow hover:bg-blue-800">
+            <a href="/login" className="mt-6 inline-block bg-blue-700 text-white px-6 py-3 rounded shadow hover:bg-blue-800">
               Get Started
             </a>
           </div>
