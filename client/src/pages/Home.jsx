@@ -32,7 +32,7 @@ const Home = () => {
       </header>
 
       {/* Hero Section */}
-      <section id="hero" className="flex items-center justify-center min-h-screen bg-gray-100 px-4">
+      <section id="home" className="flex items-center justify-center min-h-screen bg-gray-100 px-4">
         <div className="container mx-auto flex flex-col lg:flex-row items-center">
           <div className="w-full lg:w-1/2 text-center lg:text-left">
             <h1 className="text-4xl md:text-5xl font-bold text-blue-900">We offer modern solutions for Online Exam</h1>
@@ -42,7 +42,7 @@ const Home = () => {
             </ScrollLink>
           </div>
           <div className="w-full lg:w-1/2 mt-8 lg:mt-0">
-            <img src={heroImg} alt="Hero" className="w-full" />
+            <img src={heroImg} alt="home" className="w-full" />
           </div>
         </div>
       </section>
@@ -56,7 +56,7 @@ const Home = () => {
             <p className="text-gray-700 mt-4">
               An application that evaluates descriptive answers using NLP techniques and provides scores based on predefined correct answers.
             </p>
-            <ScrollLink to="values" smooth={true} duration={500} className="mt-6 inline-block bg-blue-700 text-white px-6 py-3 rounded shadow hover:bg-blue-800">
+            <ScrollLink to="benefits" smooth={true} duration={500} className="mt-6 inline-block bg-blue-700 text-white px-6 py-3 rounded shadow hover:bg-blue-800">
               Read More
             </ScrollLink>
           </div>
@@ -67,7 +67,7 @@ const Home = () => {
       </section>
 
       {/* Benefits Section */}
-      <section id="values" className="py-16 bg-gray-100 px-4">
+      <section id="benefits" className="py-16 bg-gray-100 px-4">
         <div className="container mx-auto text-center">
           <h2 className="text-lg text-blue-700 uppercase font-bold">Benefits of EduCheck</h2>
           <p className="text-2xl font-bold text-blue-900">Our Solution Benefits Teachers & Students</p>
