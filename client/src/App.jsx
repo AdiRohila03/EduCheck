@@ -7,6 +7,8 @@ import CreateTest from './pages/teacher/createTest'
 import CreateQuest from './pages/teacher/createQuest'
 import ViewTest from './pages/teacher/viewTest'
 import JoinClass from './pages/student/joinClass'
+import AttendTest from './pages/student/attendTest'
+import ReviewTest from './pages/student/reviewTest'
 import Dashboard from './pages/classroom/Dashboard'
 import Class from './pages/classroom/Class'
 import Profile from './pages/classroom/Profile'
@@ -20,12 +22,17 @@ export default function App() {
       <Routes>
         <Route path='/' element={<Home />} />
         <Route path='/login' element={<Login />} />
+        {/* Teacher */}
         <Route path='/create_class' element={<ClassroomForm />} />
         <Route path='/students_work' element={<StudentsWork />} />
         <Route path='/create_qn/:id' element={<CreateQuest />} />
         <Route path='/create_test/:id' element={<CreateTest />} />
         <Route path='/view_test/:id' element={<ViewTest />} />
+        {/* Student */}
         <Route path='/join_class' element={<JoinClass />} />
+        <Route path='/attend_test/:id' element={<AttendTest />} />
+        <Route path='/review_test/:id' element={<ReviewTest />} />
+        {/* Classroom */}
         <Route path='/dashboard' element={<Dashboard />} />
         <Route path='/view_class/:id' element={<Class />} />
         <Route path='/password' element={<Password />} />
