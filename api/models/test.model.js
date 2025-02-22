@@ -17,4 +17,6 @@ TestSchema.pre("save", function (next) {
   next();
 });
 
-module.exports = mongoose.model("Test", TestSchema);
+const Test = mongoose.model("Test", TestSchema);
+
+export { Test };

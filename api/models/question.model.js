@@ -15,4 +15,6 @@ QuestionSchema.pre("save", function (next) {
   next();
 });
 
-module.exports = mongoose.model("Question", QuestionSchema);
+const Question = mongoose.model("Question", QuestionSchema);
+
+export { Question };

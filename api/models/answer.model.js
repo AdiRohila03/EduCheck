@@ -8,4 +8,6 @@ const AnswerSchema = new mongoose.Schema({
   actual_score: { type: Number, default: 10 },
 });
 
-module.exports = mongoose.model("Answer", AnswerSchema);
+const Answer = mongoose.model("Answer", AnswerSchema);
+
+export { Answer };

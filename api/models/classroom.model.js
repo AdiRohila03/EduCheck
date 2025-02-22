@@ -7,4 +7,6 @@ const ClassroomSchema = new mongoose.Schema({
   desc: { type: String, default: "" },
 });
 
-module.exports = mongoose.model("Classroom", ClassroomSchema);
+const Classroom = mongoose.model("Classroom", ClassroomSchema);
+
+export { Classroom };

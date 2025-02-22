@@ -8,4 +8,6 @@ const TestTakenSchema = new mongoose.Schema({
   actual_score: { type: Number, default: 0 },
 }, { uniqueIndexes: { test: 1, student: 1 } });
 
-module.exports = mongoose.model("TestTaken", TestTakenSchema);
+const TestTaken = mongoose.model("TestTaken", TestTakenSchema);
+
+export { TestTaken };

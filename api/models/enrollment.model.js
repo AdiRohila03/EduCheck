@@ -5,4 +5,6 @@ const EnrollmentSchema = new mongoose.Schema({
   student: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
 }, { uniqueIndexes: { room: 1, student: 1 } });
 
-module.exports = mongoose.model("Enrollment", EnrollmentSchema);
+const Enrollment = mongoose.model("Enrollment", EnrollmentSchema);
+
+export { Enrollment };
