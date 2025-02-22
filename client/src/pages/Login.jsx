@@ -7,7 +7,9 @@ const AuthForm = () => {
     email: "",
     password: "",
     isStaff: false,
+    teacherCode: ""
   });
+  const [error, setError] = useState("");
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -16,6 +18,11 @@ const AuthForm = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    if (formData.isStaff && formData.teacherCode !== "Teacher@123") {
+      setError("Invalid Code");
+      return;
+    }
+    setError("");
     console.log(isSignUp ? "Sign Up Data:" : "Login Data:", formData);
   };
 
@@ -32,6 +39,12 @@ const AuthForm = () => {
               <label className="flex items-center mt-2">
                 <input type="checkbox" name="isStaff" className="mr-2" onChange={handleChange} /> Are You a Teacher?
               </label>
+              {formData.isStaff && (
+                <>
+                  <input type="password" name="teacherCode" placeholder="Enter Unique Code" required className="w-full p-2 border rounded mt-2" onChange={handleChange} />
+                  {error && <p className="text-red-500 mt-1">{error}</p>}
+                </>
+              )}
               <button type="submit" className="w-full bg-blue-600 text-white py-2 rounded mt-4">Sign Up</button>
             </form>
           ) : (
@@ -54,7 +67,7 @@ const AuthForm = () => {
             </div>
           ) : (
             <div className="text-center">
-              <h1 className=" text-black text-2xl font-bold">New Here!</h1>
+              <h1 className="text-black text-2xl font-bold">New Here!</h1>
               <p className="text-black mt-2">Enter your personal details and start your journey with us</p>
               <button onClick={() => setIsSignUp(true)} className="mt-4 bg-blue-600 text-primary px-6 py-2 rounded">Sign Up</button>
             </div>
