@@ -6,10 +6,6 @@ import { Test } from "../models/test.model.js";
 import { TestTaken } from "../models/testTaken.model.js";
 import { compareAsc } from "date-fns";
 
-// Home Page
-export const home = (req, res) => {
-  res.render("/");
-};
 
 // Dashboard
 export const dashboard = async (req, res) => {

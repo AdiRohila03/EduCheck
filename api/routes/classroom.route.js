@@ -1,6 +1,5 @@
 import express from "express";
 import {
-  home,
   dashboard,
   viewClass,
   people,
@@ -13,7 +12,6 @@ import {
 
 const router = express.Router();
 
-router.get("/", home);
 router.get("/dashboard", dashboard);
 router.get("/view_class/:classId", viewClass);
 router.get("/view_class/:classId/people", people);
