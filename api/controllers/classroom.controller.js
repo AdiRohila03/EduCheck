@@ -8,14 +8,14 @@ import { compareAsc } from "date-fns";
 
 // Home Page
 export const home = (req, res) => {
-  res.render("classroom/home");
+  res.render("/");
 };
 
 // Dashboard
 export const dashboard = async (req, res) => {
   const colors = [ "blue", "orange", "green", "red", "purple", "pink" ];
   let rooms;
-  if (req.user.is_staff) {
+  if (req.user.isStaff) {
     rooms = await Classroom.find({ owner: req.user._id });
   } else {
     const enrollments = await Enrollment.find({ student: req.user._id }).select("room_id");
@@ -29,7 +29,7 @@ export const dashboard = async (req, res) => {
     delay: (index + 2) * 100,
   }));
 
-  res.render("classroom/dashboard", { rooms });
+  res.render("/dashboard", { rooms });
 };
 
 // View Class
@@ -48,7 +48,7 @@ export const viewClass = async (req, res) => {
   const totalTests = await Test.countDocuments({ belongs: classId });
   tests = await tests.skip((page - 1) * limit).limit(limit);
 
-  if (!req.user.is_staff) {
+  if (!req.user.isStaff) {
     tests = await Promise.all(
       tests.map(async (t) => {
         const testTakenEntry = await TestTaken.findOne({ student: req.user._id, test: t._id });
@@ -89,60 +89,68 @@ export const profile = async (req, res) => {
       req.flash("error", error.message);
     }
   }
-  res.render("classroom/profile", { user: req.user });
+  res.render("/profile", { user: req.user });
 };
 
 // Password Change
 export const passwordChange = async (req, res) => {
-  if (req.method === "POST") {
     try {
       const hashedPassword = await bcrypt.hash(req.body.password, 10);
       await User.findByIdAndUpdate(req.user._id, { password: hashedPassword });
       req.flash("success", "Your password has been successfully updated!");
-      return res.redirect("/dashboard");
+      
+      return res.status(200).json({ success: true })
     } catch (error) {
       req.flash("error", error.message);
     }
-  }
-  res.render("classroom/password");
 };
 
 // Signup
 export const signup = async (req, res) => {
-  if (req.method === "POST") {
+   
     try {
-      const { name, email, password, is_staff } = req.body;
+      const { name, email, password, isStaff } = req.body;
       if (await User.findOne({ email })) throw new Error("Email already exists");
-      const hashedPassword = await bcrypt.hash(password, 10);
-      const newUser = new User({ name, email, password: hashedPassword, is_staff: is_staff === "on" });
+      // const hashedPassword = await bcrypt.hash(password, 10);
+
+      const newUser = new User({ name, email, password, isStaff});
       await newUser.save();
-      return res.redirect("/login");
+
+      return res.status(200).json({
+        success: true,
+        message: "User created successfully",
+        user: newUser,
+      });
+      
     } catch (error) {
       req.flash("error", error.message);
     }
-  }
-  res.render("classroom/login");
 };
 
 // Login
 export const login = async (req, res) => {
-  if (req.method === "POST") {
-    try {
-      const { email, password } = req.body;
-      const user = await User.findOne({ email });
-      if (!user || !(await bcrypt.compare(password, user.password))) throw new Error("Username or password incorrect");
-      req.session.user = user;
-      return res.redirect("/dashboard");
-    } catch (error) {
-      req.flash("error", error.message);
-    }
+  try {
+    const { email, password } = req.body;
+    const user = await User.findOne({ email });
+    if (!user || !(await bcrypt.compare(password, user.password))) throw new Error("Username or password incorrect");
+    req.session.user = user;
+
+    return res.status(200).json({
+      success: true,
+      message: "User fetched successfully",
+      user: user,
+    });
+
+  } catch (error) {
+    req.flash("error", error.message);
   }
-  res.render("classroom/login");
 };
 
 // Logout
 export const logout = (req, res) => {
   req.session.destroy(() => {
-    res.redirect("/home");
-  });
+    return res.status(200).json({
+      success: true,
+      message: "User looged out successfully",
+    });  });
 };

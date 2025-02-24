@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import Home from './pages/Home'
 import Login from './pages/Login'
+import SignUp from './pages/SignUp'
 import ClassroomForm from './pages/teacher/createClass'
 import StudentsWork from './pages/teacher/studentsWork'
 import CreateTest from './pages/teacher/createTest'
@@ -22,6 +23,7 @@ export default function App() {
       <Routes>
         <Route path='/' element={<Home />} />
         <Route path='/login' element={<Login />} />
+        <Route path='/signup' element={<SignUp />} />
         {/* Teacher */}
         <Route path='/create_class' element={<ClassroomForm />} />
         <Route path='/students_work' element={<StudentsWork />} />
