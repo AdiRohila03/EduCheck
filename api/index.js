@@ -2,6 +2,7 @@ import express from 'express';
 import dotenv from "dotenv";
 import mongoose from 'mongoose';
 import session from "express-session";
+import cookieParser from "cookie-parser";
 import flash from "connect-flash";
 import classroomRouter from './routes/classroom.route.js'
 import studentRouter from './routes/student.route.js'
@@ -9,6 +10,7 @@ import teacherRouter from './routes/teacher.route.js'
 
 dotenv.config();
 const app = express();
+app.use(cookieParser()); 
 app.use(express.json());
 
 app.use(session({

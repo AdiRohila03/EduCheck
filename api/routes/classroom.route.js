@@ -9,16 +9,17 @@ import {
   login,
   logout,
 } from "../controllers/classroom.controller.js";
+import { ensureAuthenticated } from "../middleware/authMiddleware.js";
 
 const router = express.Router();
 
-router.get("/dashboard", dashboard);
-router.get("/view_class/:classId", viewClass);
-router.get("/view_class/:classId/people", people);
-router.get("/profile", profile);
-router.post("/password", passwordChange);
+router.get("/dashboard",ensureAuthenticated, dashboard);
+router.get("/view_class/:classId", ensureAuthenticated,viewClass);
+router.get("/view_class/:classId/people",ensureAuthenticated, people);
+router.get("/profile",ensureAuthenticated, profile);
+router.post("/password", ensureAuthenticated,passwordChange);
 router.post("/signup", signup);
 router.post("/login", login);
-router.get("/logout", logout);
+router.get("/logout",ensureAuthenticated, logout);
 
 export default router;

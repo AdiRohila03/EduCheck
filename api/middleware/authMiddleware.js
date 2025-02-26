@@ -4,15 +4,24 @@ import { User } from "../models/user.model.js";
 // Middleware to check if user is authenticated
 export const ensureAuthenticated = async (req, res, next) => {
   try {
-    const token = req.cookies.token;
-    if (!token) return res.redirect("/login");
-
+    
+    const token = req.cookies.accessToken;
+    
+    if (!token) {
+      
+      return res.redirect("/login");
+    }
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     req.user = await User.findById(decoded.id);
 
-    if (!req.user) return res.redirect("/login");
-    next();
+    if (!req.user) {
+
+      return res.redirect("/login");
+    }
+      next();
   } catch (err) {
+    console.log(err.message);
+    
     res.redirect("/login");
   }
 };
