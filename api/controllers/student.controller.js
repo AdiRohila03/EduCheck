@@ -18,10 +18,11 @@ export const joinClassroom = async (req, res) => {
         if (alreadyEnrolled) {
             return res.status(400).json({ message: "You are already enrolled in this class" });
         }
-        await Enrollment.create({ classroom: classroom._id, student: req.user._id });
+        await Enrollment.create({ room: classroom._id, student: req.user._id });
         res.status(200).json({ message: "Successfully joined classroom" });
     } catch (error) {
-        res.status(500).json({ message: "Server error" });
+        console.log(error.message);        
+        res.status(500).json({ message: error.message });
     }
 };
 

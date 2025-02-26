@@ -50,7 +50,7 @@ const ClassroomList = () => {
   const fetchData = async () => {
     try {
       const response = await axios.get("/api/dashboard"); 
-      console.log(response.data);
+      // console.log(response.data);
       
       setRooms(response.data.rooms || []);
     } catch (err) {

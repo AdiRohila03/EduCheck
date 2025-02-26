@@ -1,10 +1,43 @@
 import onlineClass from "../../assets/img/OnlineClass.jpg";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+
 
 
 const JoinClass = () => {
-    const handleSubmit = (e) => {
+    const [formData, setFormData] = useState({
+      code: ""
+    });
+  const navigate = useNavigate();
+
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+    const handleSubmit =async (e) => {
       e.preventDefault();
-      console.log("Classroom join request submitted");
+
+      try {
+          // dispatch(signInStart());
+          const res = await fetch("/api/student/join_class", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(formData),
+          });
+      
+          const data = await res.json();
+          if (data.success === false) {
+            // dispatch(signInFailure(error.message));
+            return;
+          }
+          // dispatch(signInSuccess(data)); 
+          navigate("/dashboard"); 
+        } catch (error) {
+          console.log(error.message);
+          // dispatch(signInFailure(error.message));
+        }
     };
   
     return (
@@ -29,6 +62,8 @@ const JoinClass = () => {
                   <input 
                     type="text" 
                     name="code" 
+                    value={formData.name}
+                    onChange={handleChange}
                     className="w-full p-4 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500" 
                     placeholder="Classroom Code" 
                     required 

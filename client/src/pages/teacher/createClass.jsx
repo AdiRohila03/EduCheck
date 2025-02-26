@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import onlineClass from "../../assets/img/OnlineClass.jpg";
 
 export default function ClassroomForm() {
@@ -7,14 +8,36 @@ export default function ClassroomForm() {
     code: "",
     desc: ""
   });
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async(e) => {
     e.preventDefault();
-    console.log("Form submitted", formData);
+    // console.log("Form submitted", formData);
+        try {
+          // dispatch(signInStart());
+          const res = await fetch("/api/teacher/create_class", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(formData),
+          });
+      
+          const data = await res.json();
+          if (data.success === false) {
+            // dispatch(signInFailure(error.message));
+            return;
+          }
+          // dispatch(signInSuccess(data)); 
+          navigate("/dashboard"); 
+        } catch (error) {
+          console.log(error.message);
+          // dispatch(signInFailure(error.message));
+        }
   };
 
   return (
