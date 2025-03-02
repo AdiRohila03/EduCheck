@@ -36,7 +36,7 @@ export default function App() {
         <Route path='/review_test/:id' element={<ReviewTest />} />
         {/* Classroom */}
         <Route path='/dashboard' element={<Dashboard />} />
-        <Route path='/view_class/:id' element={<Class />} />
+        <Route path='/view_class/:classId' element={<Class />} />
         <Route path='/password' element={<Password />} />
         <Route path='/profile' element={<Profile />} />
         <Route path='/people/:id' element={<People />} />

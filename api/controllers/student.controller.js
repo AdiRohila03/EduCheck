@@ -128,3 +128,18 @@ export const reviewTest = async (req, res) => {
         res.status(500).json({ message: "Server error" });
     }
 };
+
+
+// Create a testTaken route
+// export const testTaken = async (req, res) => {
+//     try {
+//       const { test, student, submittedAt, ml_score, actual_score, status } = req.body;
+  
+//       const testTaken = new TestTaken({ test, student, submittedAt, ml_score, actual_score, status });
+//       await testTaken.save();
+  
+//       res.status(201).json({ message: "Test created successfully", testTaken });
+//     } catch (error) {
+//       res.status(500).json({ error: error.message });
+//     }
+//   };

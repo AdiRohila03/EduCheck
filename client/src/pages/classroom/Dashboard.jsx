@@ -50,7 +50,7 @@ const ClassroomList = () => {
   const fetchData = async () => {
     try {
       const response = await axios.get("/api/dashboard"); 
-      // console.log(response.data);
+      // console.log(response.data.rooms);
       
       setRooms(response.data.rooms || []);
     } catch (err) {
@@ -75,8 +75,8 @@ const ClassroomList = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mt-8">
           {rooms.length > 0 ? (
             rooms.map((room) => (
-              <a key={room.id} href={`/view_class/${room.id}`} className="block transition-transform transform hover:scale-105">
-                <div className={`p-8 rounded-lg shadow-lg border-t-4 ${room.color || "bg-gray-200"} border-primary`}>
+              <a key={room._id} href={`/view_class/${room._id}`} className="block transition-transform transform hover:scale-105">
+                <div className={`p-8 rounded-lg shadow-lg border-t-4 ${room.color || "bg-blue-300"} border-primary`}>
                   <i className="ri-discuss-line text-4xl text-primary"></i>
                   <h3 className="mt-3 text-xl font-semibold text-gray-800">{room.name}</h3>
                   <p className="text-gray-600">{room.desc}</p>
