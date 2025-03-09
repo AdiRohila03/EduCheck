@@ -1,19 +1,43 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useParams } from "react-router-dom";
 
-const CreateQuestion = ({ existingQuestion }) => {
+const CreateQuestion = () => {
+  const { testId } = useParams();
+
   const [formData, setFormData] = useState({
-    questionText: existingQuestion?.questionText || "",
-    answer: existingQuestion?.answer || "",
-    maxScore: existingQuestion?.maxScore || "",
+    name: "",
+    answer: "",
+    max_score: "",
   });
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log(existingQuestion ? "Updating Question:" : "Creating Question:", formData);
+    console.log("Creating Question:", formData);
+    try {
+          const res = await fetch(`/api/teacher/test/create_qn/${testId}`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(formData),
+          });
+      
+      const data = await res.json();
+      console.log(data);
+      
+          if (data.success === false) {
+            return;
+          }
+          navigate(`/view_test/${testId}`); 
+        } catch (error) {
+          console.log(error.message);
+        }
   };
 
   return (
@@ -21,15 +45,15 @@ const CreateQuestion = ({ existingQuestion }) => {
       <div className="w-3/5 bg-white shadow-lg rounded-lg p-10 bg-cover" style={{ backgroundImage: "url('/assets/img/hero-bg.png')" }}>
         <div className="w-11/12 mx-auto">
           <h1 className="text-4xl font-bold text-primary text-center">
-            {existingQuestion ? "Update Question" : "Create Question"}
+            {"Create Question"}
           </h1>
           
           <form onSubmit={handleSubmit} className="mt-6 space-y-4">
             <div>
               <label className="block text-gray-700 text-sm font-bold mb-2">Question Text</label>
               <textarea
-                name="questionText"
-                value={formData.questionText}
+                name="name"
+                value={formData.name}
                 onChange={handleChange}
                 className="w-full p-3 border rounded-lg shadow-sm focus:outline-none focus:ring focus:border-primary"
                 required
@@ -52,8 +76,8 @@ const CreateQuestion = ({ existingQuestion }) => {
               <label className="block text-gray-700 text-sm font-bold mb-2">Maximum Score</label>
               <input
                 type="number"
-                name="maxScore"
-                value={formData.maxScore}
+                name="max_score"
+                value={formData.max_score}
                 onChange={handleChange}
                 className="w-full p-3 border rounded-lg shadow-sm focus:outline-none focus:ring focus:border-primary"
                 required
@@ -73,7 +97,7 @@ const CreateQuestion = ({ existingQuestion }) => {
 };
 
 const App = () => {
-  return <CreateQuestion existingQuestion={null} />;
+  return <CreateQuestion />;
 };
 
 export default App;

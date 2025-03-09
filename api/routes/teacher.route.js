@@ -31,7 +31,7 @@ router.delete("/delete_test/:testId", ensureAuthenticated, teacherRequired, dele
 router.get("/view_test/:testId", ensureAuthenticated, teacherRequired, viewTest);
 
 // Question routes
-router.post("/test/:testId/create_qn", ensureAuthenticated, teacherRequired, createQuestion);
+router.post("/test/create_qn/:testId", ensureAuthenticated, teacherRequired, createQuestion);
 router.put("/update_qn/:qnId", ensureAuthenticated, teacherRequired, updateQuestion);
 router.delete("/delete_qn/:qnId", ensureAuthenticated, teacherRequired, deleteQuestion);
 

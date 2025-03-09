@@ -1,7 +1,37 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import axios from "axios";
+import { useParams } from "react-router-dom";
 import logo from "../../assets/img/logo.png";
 
-const Header = ({ user, test }) => {
+const Header = () => {
+  const { testId } = useParams(); 
+  const [ user, setUser ] = useState([]);
+  const [ test, setTests ] = useState([]);
+  const [ loading, setLoading ] = useState(true);
+  const [ error, setError ] = useState(null);
+
+  useEffect(() => {
+      const fetchData = async () => {
+        try {
+          const response = await axios.get(`/api/teacher/view_test/${testId}`);
+          // console.log(response.data.user);
+  
+          setUser(response.data.user || []);
+          setTests(response.data.test || []);
+        } catch (err) {
+          console.error("Error fetching data:", err);
+          setError("Failed to load data. Please try again.");
+        } finally {
+          setLoading(false);
+        }
+      };
+      if (testId) fetchData(); // Fetch only if testId exists
+    }, [ testId ]);
+  
+    if (loading) return <div className="text-center mt-10">Loading...</div>;
+    if (error) return <div className="text-center mt-10 text-red-500">{error}</div>;
+  
+
   return (
     <header className="fixed top-0 w-full bg-white shadow-md p-5">
       <div className="container mx-auto flex items-center justify-between">
@@ -13,17 +43,17 @@ const Header = ({ user, test }) => {
           <a href="/dashboard" className="text-primary hover:text-secondary transition">Home</a>
           {user.isStaff && (
             <>
-              <a href={`/create_qn/${test.id}`} className="text-primary hover:text-secondary transition">
+              <a href={`/create_qn/${test._id}`} className="text-primary hover:text-secondary transition">
                 <i className="bi bi-folder-plus"></i> Create Question
               </a>
-              <a href={`/update_test/${test.id}`} className="text-primary hover:text-secondary transition">
+              <a href={`/update_test/${test._id}`} className="text-primary hover:text-secondary transition">
                 <i className="bi bi-gear"></i> Modify Test
               </a>
             </>
           )}
           <div className="relative group">
             <button className="flex items-center space-x-2 text-primary hover:text-secondary transition">
-              <span>{user.firstName}</span>
+              <span>{user.name}</span>
               <i className="bi bi-person-circle"></i>
             </button>
             <ul className="absolute hidden group-hover:block bg-white shadow-lg p-3 right-0 mt-2 rounded-lg text-sm w-40">
@@ -31,7 +61,7 @@ const Header = ({ user, test }) => {
               <li><a href="/logout" className="block px-4 py-2 hover:bg-gray-200">Logout</a></li>
               {user.isStaff && (
                 <li>
-                  <a href={`/delete_test/${test.id}`} className="block px-4 py-2 text-red-600 hover:bg-red-100">
+                  <a href={`/delete_test/${test._id}`} className="block px-4 py-2 text-red-600 hover:bg-red-100">
                     Delete {test.name} <i className="bi bi-trash"></i>
                   </a>
                 </li>
@@ -44,20 +74,55 @@ const Header = ({ user, test }) => {
   );
 };
 
-const QuestionsList = ({ questions }) => {
+const QuestionsList = () => {
+  const [ questions, setQuestions ] = useState([]);
+  const { testId } = useParams(); 
+
+  const [ loading, setLoading ] = useState(true);
+  const [ error, setError ] = useState(null);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await axios.get(`/api/teacher/view_test/${testId}`);
+        let sortedQuestions = response.data.questions || [];
+        sortedQuestions.sort((a, b) => new Date(a.create_time) - new Date(b.create_time));
+        sortedQuestions = sortedQuestions.map((t, index) => ({ ...t, index: index + 1 }));
+        setQuestions(sortedQuestions);
+      } catch (err) {
+        console.error("Error fetching data:", err);
+        setError("Failed to load data. Please try again.");
+      } finally {
+        setLoading(false);
+      }
+    };
+    if (testId) fetchData();
+  }, [ testId ]);
+
+  if (loading) return <div className="text-center mt-10">Loading...</div>;
+  if (error) return <div className="text-center mt-10 text-red-500">{error}</div>;
+
   return (
     <section className="py-16 bg-gray-50">
       <div className="container mx-auto">
         <h2 className="text-lg font-bold text-primary uppercase tracking-wide">Questions</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-8">
           {questions.map((q, index) => (
-            <article key={q.id} className="p-6 bg-white shadow-md rounded-lg">
+            <article key={q._id} className="p-6 bg-white shadow-md rounded-lg">
               <h5 className="text-lg font-semibold text-gray-800">{index + 1}. {q.name}</h5>
+
+              {/* Display answer if available */}
+              {q.answer && (
+                <div className="text-sm text-gray-700 mt-2">
+                  <strong>Answer:</strong> {q.answer}
+                </div>
+              )}
+
               <div className="text-sm text-gray-500 mt-2 flex items-center justify-between">
-                <span><i className="bi bi-award"></i> Max Score: {q.maxScore}</span>
+                <span><i className="bi bi-award"></i> Max Score: {q.max_score}</span>
                 <div className="flex space-x-4">
-                  <a href={`/update_qn/${q.id}`} className="text-green-500 hover:text-green-700"><i className="bi bi-gear"></i> Edit</a>
-                  <a href={`/delete_qn/${q.id}`} className="text-red-500 hover:text-red-700"><i className="bi bi-trash"></i> Delete</a>
+                  <a href={`/update_qn/${q._id}`} className="text-green-500 hover:text-green-700"><i className="bi bi-gear"></i> Edit</a>
+                  <a href={`/delete_qn/${q._id}`} className="text-red-500 hover:text-red-700"><i className="bi bi-trash"></i> Delete</a>
                 </div>
               </div>
             </article>
@@ -69,18 +134,11 @@ const QuestionsList = ({ questions }) => {
 };
 
 const App = () => {
-  const [user] = useState({ isStaff: true, firstName: "John" });
-  const [test] = useState({ id: 1, name: "Final Exam" });
-  const [questions] = useState([
-    { id: 1, name: "What is React?", maxScore: 5 },
-    { id: 2, name: "Explain the Virtual DOM.", maxScore: 10 }
-  ]);
-
   return (
     <div className="font-sans text-gray-900">
-      <Header user={user} test={test} />
+      <Header />
       <main className="pt-24">
-        <QuestionsList questions={questions} />
+        <QuestionsList />
       </main>
     </div>
   );

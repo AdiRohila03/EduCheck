@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import logo from "../../assets/img/logo.png";
 import axios from "axios";
 import { useParams } from "react-router-dom";
+import { useSelector } from 'react-redux'
 
 const Header = () => {
   const { classId } = useParams(); // Get dynamic classId
@@ -92,18 +93,24 @@ const SortableItem = ({ item, index, status, Tstatus }) => {
   // console.log("status", status);
   // console.log("Tstatus", Tstatus);
 
+  const { currentUser } = useSelector(state => state.user)
   const displayStatus = Tstatus === "not" ? status : Tstatus;
 
   return (
     <article className="p-6 bg-white shadow-md rounded-lg flex flex-col gap-2 border-l-4 border-blue-500">
       <h2 className="text-xl font-semibold text-gray-800">
-        {status === "late" || status === "not" ? (
+        {currentUser?.user.isStaff ? (
+          <a href={`/view_test/${item._id}`} className="text-primary hover:text-secondary transition">
+            {index}. {item.name}
+          </a>
+        ) : (
+          status === "late" || status === "not" ? (
           <span>{index}. {item.name}</span>
         ) : (
           <a href={`/attend_test/${item._id}`} className="text-primary hover:text-secondary transition">
             {index}. {item.name}
           </a>
-        )}
+        ))}
       </h2>
       <p className="text-gray-600 mt-2">{item.desc}</p>
       <p className={`mt-2 font-semibold ${displayStatus === "done" ? "text-green-500" :

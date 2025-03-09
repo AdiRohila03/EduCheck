@@ -2,8 +2,8 @@ import mongoose from "mongoose";
 
 const QuestionSchema = new mongoose.Schema({
   test: { type: mongoose.Schema.Types.ObjectId, ref: "Test", required: true },
-  qn_text: { type: String, required: true },
-  key: { type: String, required: true },
+  name: { type: String, required: true },
+  answer: { type: String, required: true },
   max_score: { type: Number, default: 100 },
 });
 

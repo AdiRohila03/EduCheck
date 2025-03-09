@@ -27,12 +27,12 @@ export default function App() {
         {/* Teacher */}
         <Route path='/create_class' element={<ClassroomForm />} />
         <Route path='/students_work' element={<StudentsWork />} />
-        <Route path='/create_qn/:id' element={<CreateQuest />} />
+        <Route path='/create_qn/:testId' element={<CreateQuest />} />
         <Route path='/create_test/:classId' element={<CreateTest />} />
-        <Route path='/view_test/:id' element={<ViewTest />} />
+        <Route path='/view_test/:testId' element={<ViewTest />} />
         {/* Student */}
         <Route path='/join_class' element={<JoinClass />} />
-        <Route path='/attend_test/:id' element={<AttendTest />} />
+        <Route path='/attend_test/:testId' element={<AttendTest />} />
         <Route path='/review_test/:id' element={<ReviewTest />} />
         {/* Classroom */}
         <Route path='/dashboard' element={<Dashboard />} />

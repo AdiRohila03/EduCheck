@@ -121,12 +121,12 @@ export const viewTest = async (req, res) => {
     const test = await Test.findById(testId);
     if (!test) return res.status(404).json({ error: "Test not found" });
 
-    const questions = await Question.find({ test: testId, qn_text: { $regex: search, $options: "i" } })
+    const questions = await Question.find({ test: testId, name: { $regex: search, $options: "i" } })
       .limit(limit)
       .skip(skip);
 
-    const totalQuestions = await Question.countDocuments({ test: testId, qn_text: { $regex: search, $options: "i" } });
-    res.json({ test, questions, totalPages: Math.ceil(totalQuestions / limit) });
+    const totalQuestions = await Question.countDocuments({ test: testId, name: { $regex: search, $options: "i" } });
+    res.json({ user:req.user, test, questions, totalPages: Math.ceil(totalQuestions / limit) });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -135,7 +135,7 @@ export const viewTest = async (req, res) => {
 // Create question
 export const createQuestion = async (req, res) => {
   try {
-    const { qn_text, key, max_score } = req.body;
+    const { name, answer, max_score } = req.body;
     const { testId } = req.params;
 
     const test = await Test.findById(testId);
@@ -143,7 +143,7 @@ export const createQuestion = async (req, res) => {
       return res.status(404).json({ message: "Test not found" });
     }
 
-    const question = new Question({ test: testId, qn_text, key, max_score });
+    const question = new Question({ test: testId, name, answer, max_score });
     await question.save();
 
     res.status(201).json({ message: "Question created successfully", question });
@@ -281,23 +281,3 @@ export const updateWork = async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 };
-
-
-
-
-// View test
-// export const viewTest = async (req, res) => {
-//   try {
-//     const { testId } = req.params;
-//     const test = await Test.findById(testId).populate("belongs");
-//     const questions = await Question.find({ test: testId });
-
-//     if (!test) {
-//       return res.status(404).json({ message: "Test not found" });
-//     }
-
-//     res.status(200).json({ test, questions });
-//   } catch (error) {
-//     res.status(500).json({ error: error.message });
-//   }
-// };
