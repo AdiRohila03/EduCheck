@@ -25,7 +25,7 @@ router.put("/update_class/:classId", ensureAuthenticated, teacherRequired, updat
 router.delete("/delete_class/:classId", ensureAuthenticated, teacherRequired, deleteClassroom);
 
 // Test routes
-router.post("/:classId/create_test", ensureAuthenticated, teacherRequired, createTest);
+router.post("/create_test/:classId", ensureAuthenticated, teacherRequired, createTest);
 router.put("/update_test/:testId", ensureAuthenticated, teacherRequired, updateTest);
 router.delete("/delete_test/:testId", ensureAuthenticated, teacherRequired, deleteTest);
 router.get("/view_test/:testId", ensureAuthenticated, teacherRequired, viewTest);

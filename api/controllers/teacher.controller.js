@@ -58,6 +58,8 @@ export const createTest = async (req, res) => {
   try {
     const { name, desc, start_time, end_time } = req.body;
     const { classId } = req.params;
+    // console.log(classId);
+    
     const classroom = await Classroom.findById(classId);
 
     if (!classroom) {
@@ -66,6 +68,8 @@ export const createTest = async (req, res) => {
 
     const test = new Test({ belongs: classId, name, desc, start_time, end_time });
     await test.save();
+    // console.log(test);
+    
 
     res.status(201).json({ message: "Test created successfully", test });
   } catch (error) {

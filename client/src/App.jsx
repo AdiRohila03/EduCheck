@@ -28,7 +28,7 @@ export default function App() {
         <Route path='/create_class' element={<ClassroomForm />} />
         <Route path='/students_work' element={<StudentsWork />} />
         <Route path='/create_qn/:id' element={<CreateQuest />} />
-        <Route path='/create_test/:id' element={<CreateTest />} />
+        <Route path='/create_test/:classId' element={<CreateTest />} />
         <Route path='/view_test/:id' element={<ViewTest />} />
         {/* Student */}
         <Route path='/join_class' element={<JoinClass />} />
