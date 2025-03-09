@@ -22,6 +22,7 @@ const router = express.Router();
 // Classroom routes
 router.post("/create_class", ensureAuthenticated, teacherRequired, createClassroom);
 router.put("/update_class/:classId", ensureAuthenticated, teacherRequired, updateClassroom);
+router.get("/view_class/:classId", ensureAuthenticated, teacherRequired, updateClassroom);
 router.delete("/delete_class/:classId", ensureAuthenticated, teacherRequired, deleteClassroom);
 
 // Test routes

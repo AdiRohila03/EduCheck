@@ -6,19 +6,17 @@ import { useSelector } from 'react-redux'
 
 const Header = () => {
   const { classId } = useParams(); // Get dynamic classId
-  const [ room, setRooms ] = useState([]);
-  const [ user, setUser ] = useState([]);
-  const [ loading, setLoading ] = useState(true);
-  const [ error, setError ] = useState(null);
+  const [room, setRoom] = useState({});
+  const [user, setUser] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const response = await axios.get(`/api/view_class/${classId}`);
-        // console.log(response.data.user);
-
         setUser(response.data.user || []);
-        setRooms(response.data.room || []);
+        setRoom(response.data.room || {});
       } catch (err) {
         console.error("Error fetching data:", err);
         setError("Failed to load data. Please try again.");
@@ -27,10 +25,31 @@ const Header = () => {
       }
     };
     if (classId) fetchData(); // Fetch only if classId exists
-  }, [ classId ]);
+  }, [classId]);
 
   if (loading) return <div className="text-center mt-10">Loading...</div>;
   if (error) return <div className="text-center mt-10 text-red-500">{error}</div>;
+
+  // Handle Classroom Deletion
+  const handleDeleteClassroom = async () => {
+    if (window.confirm("Are you sure you want to delete this classroom?")) {
+      try {
+        const response = await axios.delete(`/api/teacher/delete_class/${classId}`);
+        const data = response.data;
+
+        if (data.message === "Classroom deleted successfully") {
+          alert("Classroom deleted successfully");
+          // Optionally, you can redirect or update the state here to remove the classroom from the view
+          window.location.href = "/dashboard"; // Redirect to dashboard or wherever you want after deletion
+        } else {
+          setError("Failed to delete the classroom");
+        }
+      } catch (err) {
+        console.error("Error deleting classroom:", err);
+        setError("An error occurred while deleting the classroom.");
+      }
+    }
+  };
 
   return (
     <header className="fixed top-0 w-full bg-white shadow-md p-5">
@@ -64,9 +83,12 @@ const Header = () => {
               <li><a href={`/people/${room._id}`} className="block px-4 py-2 hover:bg-gray-200">People</a></li>
               {user.isStaff && (
                 <li>
-                  <a href={`/delete_class/${room._id}`} className="block px-4 py-2 text-red-600 hover:bg-red-100">
+                  <button
+                    onClick={handleDeleteClassroom}
+                    className="block px-4 py-2 text-red-600 hover:bg-red-100 w-full text-left"
+                  >
                     Delete {room.name} <i className="bi bi-trash"></i>
-                  </a>
+                  </button>
                 </li>
               )}
             </ul>

@@ -18,7 +18,7 @@ const CreateQuestion = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Creating Question:", formData);
+    // console.log("Creating Question:", formData);
     try {
           const res = await fetch(`/api/teacher/test/create_qn/${testId}`, {
             method: "POST",
@@ -29,7 +29,7 @@ const CreateQuestion = () => {
           });
       
       const data = await res.json();
-      console.log(data);
+      // console.log(data);
       
           if (data.success === false) {
             return;

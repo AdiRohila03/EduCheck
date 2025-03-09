@@ -25,13 +25,14 @@ export const createClassroom = async (req, res) => {
 export const updateClassroom = async (req, res) => {
   try {
     const { classId } = req.params;
+    const room = await Classroom.findById(classId);
     const classroom = await Classroom.findByIdAndUpdate(classId, req.body, { new: true });
 
     if (!classroom) {
       return res.status(404).json({ message: "Classroom not found" });
     }
 
-    res.status(200).json({ message: "Classroom updated successfully", classroom });
+    res.status(200).json({ message: "Classroom updated successfully", classroom, room });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }

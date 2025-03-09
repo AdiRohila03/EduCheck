@@ -8,6 +8,7 @@ import StudentsWork from './pages/teacher/studentsWork'
 import CreateTest from './pages/teacher/createTest'
 import CreateQuest from './pages/teacher/createQuest'
 import UpdateQuest from './pages/teacher/updateQuest'
+import UpdateClass from './pages/teacher/updateClass'
 import ViewTest from './pages/teacher/viewTest'
 // Student
 import JoinClass from './pages/student/joinClass'
@@ -30,6 +31,7 @@ export default function App() {
         <Route path='/signup' element={<SignUp />} />
         {/* Teacher */}
         <Route path='/create_class' element={<ClassroomForm />} />
+        <Route path='/update_class/:classId' element={<UpdateClass />} />
         <Route path='/students_work' element={<StudentsWork />} />
         <Route path='/create_qn/:testId' element={<CreateQuest />} />
         <Route path='/update_qn/:qnId' element={<UpdateQuest />} />
