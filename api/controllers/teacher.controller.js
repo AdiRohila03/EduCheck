@@ -81,7 +81,7 @@ export const createTest = async (req, res) => {
 // Update test
 export const updateTest = async (req, res) => {
   try {
-    const { testId } = req.params;
+    const { testId } = req.params; 
     const test = await Test.findByIdAndUpdate(testId, req.body, { new: true });
 
     if (!test) {

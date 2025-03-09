@@ -9,6 +9,7 @@ import CreateTest from './pages/teacher/createTest'
 import CreateQuest from './pages/teacher/createQuest'
 import UpdateQuest from './pages/teacher/updateQuest'
 import UpdateClass from './pages/teacher/updateClass'
+import UpdateTest from './pages/teacher/updateTest'
 import ViewTest from './pages/teacher/viewTest'
 // Student
 import JoinClass from './pages/student/joinClass'
@@ -36,6 +37,7 @@ export default function App() {
         <Route path='/create_qn/:testId' element={<CreateQuest />} />
         <Route path='/update_qn/:qnId' element={<UpdateQuest />} />
         <Route path='/create_test/:classId' element={<CreateTest />} />
+        <Route path='/update_test/:testId' element={<UpdateTest />} />
         <Route path='/view_test/:testId' element={<ViewTest />} />
         {/* Student */}
         <Route path='/join_class' element={<JoinClass />} />

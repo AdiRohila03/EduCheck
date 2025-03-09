@@ -24,7 +24,25 @@ const Header = () => {
       }
     };
     if (testId) fetchData(); // Fetch only if testId exists
-  }, [testId]);
+  }, [ testId ]);
+  
+
+  const handleDeleteTest = async () => {
+    if (window.confirm(`Are you sure you want to delete the test: ${test.name}?`)) {
+      try {
+        const response = await axios.delete(`/api/teacher/delete_test/${testId}`);
+        if (response.data.message === "Test deleted successfully") {
+          alert("Test deleted successfully");
+          // Optionally, you can redirect the user to another page after deletion.
+          window.location.href = "/dashboard"; // Redirect to dashboard or any other page
+        } else {
+          setError("Failed to delete the test");
+        }
+      } catch (err) {
+        setError("An error occurred while deleting the test");
+      }
+    }
+  };
 
   if (loading) return <div className="text-center mt-10">Loading...</div>;
   if (error) return <div className="text-center mt-10 text-red-500">{error}</div>;
@@ -58,9 +76,11 @@ const Header = () => {
               <li><a href="/logout" className="block px-4 py-2 hover:bg-gray-200">Logout</a></li>
               {user.isStaff && (
                 <li>
-                  <a href={`/delete_test/${test._id}`} className="block px-4 py-2 text-red-600 hover:bg-red-100">
+                <button 
+                    onClick={handleDeleteTest} 
+                    className="block px-4 py-2 text-red-600 hover:bg-red-100">
                     Delete {test.name} <i className="bi bi-trash"></i>
-                  </a>
+                  </button>
                 </li>
               )}
             </ul>
