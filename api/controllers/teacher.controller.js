@@ -156,13 +156,14 @@ export const createQuestion = async (req, res) => {
 export const updateQuestion = async (req, res) => {
   try {
     const { qnId } = req.params;
+    const qn = await Question.findById(qnId);
     const question = await Question.findByIdAndUpdate(qnId, req.body, { new: true });
 
     if (!question) {
       return res.status(404).json({ message: "Question not found" });
     }
 
-    res.status(200).json({ message: "Question updated successfully", question });
+    res.status(200).json({ message: "Question updated successfully", question, qn });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }

@@ -4,33 +4,30 @@ import { useParams } from "react-router-dom";
 import logo from "../../assets/img/logo.png";
 
 const Header = () => {
-  const { testId } = useParams(); 
-  const [ user, setUser ] = useState([]);
-  const [ test, setTests ] = useState([]);
-  const [ loading, setLoading ] = useState(true);
-  const [ error, setError ] = useState(null);
+  const { testId } = useParams();
+  const [user, setUser] = useState([]);
+  const [test, setTests] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-      const fetchData = async () => {
-        try {
-          const response = await axios.get(`/api/teacher/view_test/${testId}`);
-          // console.log(response.data.user);
-  
-          setUser(response.data.user || []);
-          setTests(response.data.test || []);
-        } catch (err) {
-          console.error("Error fetching data:", err);
-          setError("Failed to load data. Please try again.");
-        } finally {
-          setLoading(false);
-        }
-      };
-      if (testId) fetchData(); // Fetch only if testId exists
-    }, [ testId ]);
-  
-    if (loading) return <div className="text-center mt-10">Loading...</div>;
-    if (error) return <div className="text-center mt-10 text-red-500">{error}</div>;
-  
+    const fetchData = async () => {
+      try {
+        const response = await axios.get(`/api/teacher/view_test/${testId}`);
+        setUser(response.data.user || []);
+        setTests(response.data.test || []);
+      } catch (err) {
+        console.error("Error fetching data:", err);
+        setError("Failed to load data. Please try again.");
+      } finally {
+        setLoading(false);
+      }
+    };
+    if (testId) fetchData(); // Fetch only if testId exists
+  }, [testId]);
+
+  if (loading) return <div className="text-center mt-10">Loading...</div>;
+  if (error) return <div className="text-center mt-10 text-red-500">{error}</div>;
 
   return (
     <header className="fixed top-0 w-full bg-white shadow-md p-5">
@@ -75,11 +72,10 @@ const Header = () => {
 };
 
 const QuestionsList = () => {
-  const [ questions, setQuestions ] = useState([]);
-  const { testId } = useParams(); 
-
-  const [ loading, setLoading ] = useState(true);
-  const [ error, setError ] = useState(null);
+  const [questions, setQuestions] = useState([]);
+  const { testId } = useParams();
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -97,7 +93,26 @@ const QuestionsList = () => {
       }
     };
     if (testId) fetchData();
-  }, [ testId ]);
+  }, [testId]);
+
+  const handleDelete = async (qnId) => {
+    // Confirm the deletion
+    if (window.confirm("Are you sure you want to delete this question?")) {
+      try {
+        const res = await axios.delete(`/api/teacher/delete_qn/${qnId}`);
+        const data = res.data;
+
+        if (data.message === "Question deleted successfully") {
+          // Remove the deleted question from the state
+          setQuestions(questions.filter((q) => q._id !== qnId));
+        } else {
+          setError("Failed to delete the question");
+        }
+      } catch (error) {
+        setError("An error occurred while deleting the question");
+      }
+    }
+  };
 
   if (loading) return <div className="text-center mt-10">Loading...</div>;
   if (error) return <div className="text-center mt-10 text-red-500">{error}</div>;
@@ -121,8 +136,15 @@ const QuestionsList = () => {
               <div className="text-sm text-gray-500 mt-2 flex items-center justify-between">
                 <span><i className="bi bi-award"></i> Max Score: {q.max_score}</span>
                 <div className="flex space-x-4">
-                  <a href={`/update_qn/${q._id}`} className="text-green-500 hover:text-green-700"><i className="bi bi-gear"></i> Edit</a>
-                  <a href={`/delete_qn/${q._id}`} className="text-red-500 hover:text-red-700"><i className="bi bi-trash"></i> Delete</a>
+                  <a href={`/update_qn/${q._id}`} className="text-green-500 hover:text-green-700">
+                    <i className="bi bi-gear"></i> Edit
+                  </a>
+                  <button
+                    onClick={() => handleDelete(q._id)}
+                    className="text-red-500 hover:text-red-700"
+                  >
+                    <i className="bi bi-trash"></i> Delete
+                  </button>
                 </div>
               </div>
             </article>

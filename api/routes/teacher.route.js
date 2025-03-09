@@ -33,6 +33,7 @@ router.get("/view_test/:testId", ensureAuthenticated, teacherRequired, viewTest)
 // Question routes
 router.post("/test/create_qn/:testId", ensureAuthenticated, teacherRequired, createQuestion);
 router.put("/update_qn/:qnId", ensureAuthenticated, teacherRequired, updateQuestion);
+router.get("/view_qn/:qnId", ensureAuthenticated, teacherRequired, updateQuestion);
 router.delete("/delete_qn/:qnId", ensureAuthenticated, teacherRequired, deleteQuestion);
 
 // Student_Work routes
