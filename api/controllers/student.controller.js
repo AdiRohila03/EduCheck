@@ -3,6 +3,7 @@ import { Enrollment } from '../models/enrollment.model.js';
 import { Test } from '../models/test.model.js';
 import { TestTaken } from '../models/testTaken.model.js';
 import { Answer } from '../models/answer.model.js';
+import { Question } from '../models/question.model.js';
 import natural from 'natural'; // A (NLP) library for Node.js
 import moment from 'moment';
 import paginate from '../utils/paginate.js';
@@ -30,15 +31,29 @@ export const joinClassroom = async (req, res) => {
 export const attendTest = async (req, res) => {
     try {
         const test = await Test.findById(req.params.testId);
-        if (!test) return res.status(404).json({ message: "Test not found" });
-
-        const testTaken = await TestTaken.findOne({ test: test._id, student: req.user._id });
-        if (testTaken) {
+        
+        if (!test) {
+            return res.status(404).json({ message: "Test not found" });
+        }
+        
+        const testTaken = await TestTaken.findOne({ test: req.params.testId, student: req.user._id });
+        if (testTaken.status == "done") {
             return res.status(400).json({ message: "You have already taken this test" });
         }
-        res.status(200).json({ test });
+        
+        const questions = await Question.find({ test: req.params.testId });
+        const questionArray = questions.map(question => ({
+            name: question.name,
+            max_score: question.max_score,
+        }));
+
+        res.status(200).json({
+            test,
+            questions: questionArray,
+        });
     } catch (error) {
-        res.status(500).json({ message: "Server error" });
+        console.error(error.message);
+        res.status(500).json({ message: error.message });
     }
 };
 
