@@ -4,8 +4,7 @@ import { useParams } from "react-router-dom";
 
 const CreateQuestion = () => {
   const { testId } = useParams();
-
-  const [formData, setFormData] = useState({
+  const [ formData, setFormData ] = useState({
     name: "",
     answer: "",
     max_score: "",
@@ -13,31 +12,28 @@ const CreateQuestion = () => {
   const navigate = useNavigate();
 
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    setFormData({ ...formData, [ e.target.name ]: e.target.value });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    // console.log("Creating Question:", formData);
     try {
-          const res = await fetch(`/api/teacher/test/create_qn/${testId}`, {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify(formData),
-          });
-      
+      const res = await fetch(`/api/teacher/test/create_qn/${testId}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
+
       const data = await res.json();
-      // console.log(data);
-      
-          if (data.success === false) {
-            return;
-          }
-          navigate(`/view_test/${testId}`); 
-        } catch (error) {
-          console.log(error.message);
-        }
+      if (data.success === false) {
+        return;
+      }
+      navigate(`/view_test/${testId}`);
+    } catch (error) {
+      console.log(error.message);
+    }
   };
 
   return (
@@ -47,7 +43,7 @@ const CreateQuestion = () => {
           <h1 className="text-4xl font-bold text-primary text-center">
             {"Create Question"}
           </h1>
-          
+
           <form onSubmit={handleSubmit} className="mt-6 space-y-4">
             <div>
               <label className="block text-gray-700 text-sm font-bold mb-2">Question Text</label>

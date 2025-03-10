@@ -3,43 +3,39 @@ import { useNavigate } from "react-router-dom";
 import { useParams } from "react-router-dom";
 
 const CreateTest = () => {
-  const { classId } = useParams(); // Get dynamic classId
-  // console.log(classId);
-  
-  const [formData, setFormData] = useState({
-    name:  "",
-    desc:  "",
-    start_time:  "",
-    end_time:  "",
+  const { classId } = useParams(); 
+
+  const [ formData, setFormData ] = useState({
+    name: "",
+    desc: "",
+    start_time: "",
+    end_time: "",
   });
   const navigate = useNavigate();
 
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    setFormData({ ...formData, [ e.target.name ]: e.target.value });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    // console.log("Creating Test:", formData);
     try {
-          const res = await fetch(`/api/teacher/create_test/${classId}`, {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify(formData),
-          });
-      
+      const res = await fetch(`/api/teacher/create_test/${classId}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
+
       const data = await res.json();
-      // console.log(data);
-      
-          if (data.success === false) {
-            return;
-          }
-          navigate(`/view_class/${classId}`); 
-        } catch (error) {
-          console.log(error.message);
-        }
+      if (data.success === false) {
+        return;
+      }
+      navigate(`/view_class/${classId}`);
+    } catch (error) {
+      console.log(error.message);
+    }
   };
 
   return (
@@ -47,7 +43,7 @@ const CreateTest = () => {
       <div className="w-3/5 bg-white shadow-lg rounded-lg p-10 bg-cover" style={{ backgroundImage: "url('/assets/img/hero-bg.png')" }}>
         <div className="w-11/12 mx-auto">
           <h1 className="text-4xl font-bold text-primary text-center">
-            { "Create Test"}
+            {"Create Test"}
           </h1>
           <p className="text-lg text-gray-600 text-center">
             {"Create Test here and add questions later"}

@@ -1,26 +1,69 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
-const Profile = ({ user }) => {
+const Profile = () => {
+  const [user, setUser] = useState({});
   const [formData, setFormData] = useState({
-    email: user.email,
-    firstName: user.firstName,
-    username: user.username,
+    email: '',
+    name: '',
   });
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await axios.get("/api/profile");
+        setUser(response.data.newUser || {}); 
+        setFormData({
+          email: response.data.newUser?.email || '',
+          name: response.data.newUser?.name || '',
+        }); 
+      } catch (err) {
+        console.error("Error fetching data:", err);
+        setError("Failed to load data. Please try again.");
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchData();
+  }, []);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Form submitted:", formData);
+    try {
+      const res = await fetch("/api/profile", {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
+
+      const data = await res.json();
+      if (data.success === false) {
+        return;
+      }
+      navigate("/dashboard");
+    } catch (error) {
+      console.log(error.message);
+    }
   };
+
+  if (loading) return <div className="text-center mt-10">Loading...</div>;
+  if (error) return <div className="text-center mt-10 text-red-500">{error}</div>;
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100 py-10">
       <div className="w-3/5 bg-gray-200 shadow-lg rounded-lg p-10 bg-cover" style={{ backgroundImage: "url('/assets/img/hero-bg.png')" }}>
         <div className="w-11/12 mx-auto">
-          <h1 className="text-4xl font-bold text-primary">{user.firstName} Profile</h1>
+          <h1 className="text-4xl font-bold text-primary">{user.name || 'Name'}</h1>
           <p className="text-lg text-gray-600">Edit Your Information</p>
 
           <form onSubmit={handleSubmit} className="mt-6">
@@ -37,22 +80,11 @@ const Profile = ({ user }) => {
             </div>
 
             <div className="mb-4">
-              <label className="block text-gray-700 text-sm font-bold mb-2">First Name</label>
+              <label className="block text-gray-700 text-sm font-bold mb-2">Name</label>
               <input
                 type="text"
-                name="firstName"
-                value={formData.firstName}
-                onChange={handleChange}
-                className="w-full p-3 border rounded-lg shadow-sm focus:outline-none focus:ring focus:border-primary"
-              />
-            </div>
-
-            <div className="mb-4">
-              <label className="block text-gray-700 text-sm font-bold mb-2">Username</label>
-              <input
-                type="text"
-                name="username"
-                value={formData.username}
+                name="name"
+                value={formData.name}
                 onChange={handleChange}
                 className="w-full p-3 border rounded-lg shadow-sm focus:outline-none focus:ring focus:border-primary"
               />
@@ -74,9 +106,7 @@ const Profile = ({ user }) => {
 };
 
 const App = () => {
-  const user = { firstName: "John", email: "john@example.com", username: "john_doe" };
-
-  return <Profile user={user} />;
+  return <Profile />;
 };
 
 export default App;

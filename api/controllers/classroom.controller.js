@@ -119,35 +119,59 @@ export const viewClass = async (req, res) => {
 // People in Classroom
 export const people = async (req, res) => {
   const room = await Classroom.findById(req.params.classId);
+  const teacher = await User.findById(room.owner);
   const enrollments = await Enrollment.find({ room: req.params.classId }).populate("student");
   const students = enrollments.map((e) => e.student);
-  res.render("classroom/people", { teacher: room.owner, students });
+  
+  return res.status(200).json({
+    success: true,
+    message: "People fetched successfully",
+    teacher,
+    students
+  });
 };
 
 // Profile Update
 export const profile = async (req, res) => {
-  if (req.method === "POST") {
     try {
-      await User.findByIdAndUpdate(req.user._id, req.body);
-      req.flash("success", `${req.user.name} Modified.`);
-      return res.redirect("/dashboard");
+      const newUser = await User.findByIdAndUpdate(req.user._id, req.body, { new: true });
+  
+      if (!newUser) {
+        return res.status(404).json({ message: "Classroom not found" });
+      }
+  
+      res.status(200).json({ message: "User updated successfully", newUser });
     } catch (error) {
-      req.flash("error", error.message);
+      res.status(500).json({ error: error.message });
     }
-  }
-  res.render("/profile", { user: req.user });
 };
 
 // Password Change
 export const passwordChange = async (req, res) => {
   try {
-    const hashedPassword = await bcrypt.hash(req.body.password, 10);
-    await User.findByIdAndUpdate(req.user._id, { password: hashedPassword });
-    req.flash("success", "Your password has been successfully updated!");
+    const { oldPassword, newPassword } = req.body;
+    const user = await User.findById(req.user._id);
+    if (!user) {
+      return res.status(404).json({ success: false, message: "User not found" });
+    }
 
-    return res.status(200).json({ success: true })
+    // Compare old password with the stored password
+    const isMatch = await bcrypt.compare(oldPassword, user.password);
+    if (!isMatch) {
+      return res.status(400).json({ success: false, message: "Old password is incorrect" });
+    }
+
+    // Hash the new password
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+    // Update the password in the database
+    await User.findByIdAndUpdate(req.user._id, { password: hashedPassword });
+
+    // Respond with success
+    return res.status(200).json({ success: true, message: "Password successfully updated!" });
   } catch (error) {
-    req.flash("error", error.message);
+    console.error(error.message);
+    return res.status(500).json({ success: false, message: "An error occurred" });
   }
 };
 

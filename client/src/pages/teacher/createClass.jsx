@@ -16,9 +16,7 @@ export default function ClassroomForm() {
 
   const handleSubmit = async(e) => {
     e.preventDefault();
-    // console.log("Form submitted", formData);
         try {
-          // dispatch(signInStart());
           const res = await fetch("/api/teacher/create_class", {
             method: "POST",
             headers: {
@@ -29,21 +27,16 @@ export default function ClassroomForm() {
       
           const data = await res.json();
           if (data.success === false) {
-            // dispatch(signInFailure(error.message));
             return;
           }
-          // dispatch(signInSuccess(data)); 
           navigate("/dashboard"); 
         } catch (error) {
           console.log(error.message);
-          // dispatch(signInFailure(error.message));
         }
   };
 
   return (
     <>
-
-      {/* Contact Section */}
       <section
         id="contact"
         className=" bg-gray-100 px-4 bg-cover bg-center min-h-screen flex justify-center items-center p-6"
@@ -56,7 +49,6 @@ export default function ClassroomForm() {
           </header>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {/* Form */}
             <div>
               <form onSubmit={handleSubmit} className="space-y-4">
                 <input
@@ -93,9 +85,7 @@ export default function ClassroomForm() {
                 </div>
               </form>
             </div>
-            {/* End Form */}
 
-            {/* Extra content */}
             <div>
               <img src={onlineClass} alt="Online Class" className="rounded-lg shadow-md" />
             </div>

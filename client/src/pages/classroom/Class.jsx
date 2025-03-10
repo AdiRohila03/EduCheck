@@ -5,7 +5,7 @@ import { useParams } from "react-router-dom";
 import { useSelector } from 'react-redux'
 
 const Header = () => {
-  const { classId } = useParams(); // Get dynamic classId
+  const { classId } = useParams(); 
   const [room, setRoom] = useState({});
   const [user, setUser] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -24,13 +24,12 @@ const Header = () => {
         setLoading(false);
       }
     };
-    if (classId) fetchData(); // Fetch only if classId exists
+    if (classId) fetchData(); 
   }, [classId]);
 
   if (loading) return <div className="text-center mt-10">Loading...</div>;
   if (error) return <div className="text-center mt-10 text-red-500">{error}</div>;
 
-  // Handle Classroom Deletion
   const handleDeleteClassroom = async () => {
     if (window.confirm("Are you sure you want to delete this classroom?")) {
       try {
@@ -39,8 +38,7 @@ const Header = () => {
 
         if (data.message === "Classroom deleted successfully") {
           alert("Classroom deleted successfully");
-          // Optionally, you can redirect or update the state here to remove the classroom from the view
-          window.location.href = "/dashboard"; // Redirect to dashboard or wherever you want after deletion
+          window.location.href = "/dashboard";
         } else {
           setError("Failed to delete the classroom");
         }
@@ -78,7 +76,7 @@ const Header = () => {
             </button>
             <ul className="absolute hidden group-hover:block bg-white shadow-lg p-3 right-0 mt-2 rounded-lg text-sm w-40">
               <li><a href="/profile" className="block px-4 py-2 hover:bg-gray-200">Profile</a></li>
-              <li><a href="/logout" className="block px-4 py-2 hover:bg-gray-200">Logout</a></li>
+              <li><a href="/" className="block px-4 py-2 hover:bg-gray-200">Logout</a></li>
               <li className="px-4 py-2">Class Code: {room.code}</li>
               <li><a href={`/people/${room._id}`} className="block px-4 py-2 hover:bg-gray-200">People</a></li>
               {user.isStaff && (
@@ -107,14 +105,11 @@ const formatDateTime = (isoString) => {
     hour: "2-digit",
     minute: "2-digit",
     second: "2-digit",
-    hour12: true, // AM/PM format
+    hour12: true, 
   });
 };
 
 const SortableItem = ({ item, index, status, Tstatus }) => {
-  // console.log("status", status);
-  // console.log("Tstatus", Tstatus);
-
   const { currentUser } = useSelector(state => state.user)
   const displayStatus = Tstatus === "not" ? status : Tstatus;
 
@@ -152,7 +147,7 @@ const SortableItem = ({ item, index, status, Tstatus }) => {
 
 const TestsList = () => {
   const [ search, setSearch ] = useState("");
-  const [ searchStatus, setSearchStatus ] = useState(""); // Default to empty for all tests
+  const [ searchStatus, setSearchStatus ] = useState("");
   const { classId } = useParams();
   const [ tests, setTests ] = useState([]);
   const [ testTaken, setTestTaken ] = useState([]);
@@ -181,7 +176,6 @@ const TestsList = () => {
   if (loading) return <div className="text-center mt-10">Loading...</div>;
   if (error) return <div className="text-center mt-10 text-red-500">{error}</div>;
 
-  // Filtering logic for name and combined status
   const filteredTests = tests.filter((test) => {
     const takenEntry = testTaken.find((entry) => entry?.test.toString() === test._id.toString());
     const testTStatus = takenEntry?.status || "not";
@@ -197,7 +191,6 @@ const TestsList = () => {
       <div className="container mx-auto">
         <h2 className="text-lg font-bold text-primary uppercase tracking-wide">Tests</h2>
 
-        {/* Search by Name */}
         <input
           type="text"
           placeholder="Search Tests by Name"
@@ -206,7 +199,6 @@ const TestsList = () => {
           className="w-full p-2 border border-gray-300 rounded-md mt-4"
         />
 
-        {/* Combined Status & Tstatus Filter Dropdown */}
         <select
           value={searchStatus}
           onChange={(e) => setSearchStatus(e.target.value)}
@@ -221,8 +213,6 @@ const TestsList = () => {
           <option value="late" className="text-black">Late</option>
         </select>
 
-
-        {/* Display Filtered Tests */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
           {filteredTests.map((t) => {
             const takenEntry = testTaken.find((entry) => entry?.test.toString() === t._id.toString());

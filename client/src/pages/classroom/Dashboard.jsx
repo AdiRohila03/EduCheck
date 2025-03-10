@@ -32,7 +32,7 @@ const Header = () => {
             </button>
             <ul className="absolute hidden group-hover:block bg-white shadow-lg p-3 right-0 mt-2 rounded-lg text-sm w-40">
               <li><a href="/profile" className="block px-4 py-2 hover:bg-gray-200">Profile</a></li>
-              <li><a href="/logout" className="block px-4 py-2 hover:bg-gray-200">Logout</a></li>
+              <li><a href="/" className="block px-4 py-2 hover:bg-gray-200">Logout</a></li>
             </ul>
           </div>
         </nav>
@@ -50,8 +50,6 @@ const ClassroomList = () => {
   const fetchData = async () => {
     try {
       const response = await axios.get("/api/dashboard"); 
-      // console.log(response.data.rooms);
-      
       setRooms(response.data.rooms || []);
     } catch (err) {
       console.error("Error fetching data:", err);

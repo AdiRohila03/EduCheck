@@ -48,7 +48,7 @@ export default function App() {
         <Route path='/view_class/:classId' element={<Class />} />
         <Route path='/password' element={<Password />} />
         <Route path='/profile' element={<Profile />} />
-        <Route path='/people/:id' element={<People />} />
+        <Route path='/people/:classId' element={<People />} />
       </Routes>
     </BrowserRouter>
   )

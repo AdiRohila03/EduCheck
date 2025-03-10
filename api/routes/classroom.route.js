@@ -15,7 +15,8 @@ const router = express.Router();
 
 router.get("/dashboard",ensureAuthenticated, dashboard);
 router.get("/view_class/:classId", ensureAuthenticated,viewClass);
-router.get("/view_class/:classId/people",ensureAuthenticated, people);
+router.get("/view_class/people/:classId",ensureAuthenticated, people);
+router.put("/profile",ensureAuthenticated, profile);
 router.get("/profile",ensureAuthenticated, profile);
 router.post("/password", ensureAuthenticated,passwordChange);
 router.post("/signup", signup);

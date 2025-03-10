@@ -5,10 +5,10 @@ import logo from "../../assets/img/logo.png";
 
 const Header = () => {
   const { testId } = useParams();
-  const [user, setUser] = useState([]);
-  const [test, setTests] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [ user, setUser ] = useState([]);
+  const [ test, setTests ] = useState([]);
+  const [ loading, setLoading ] = useState(true);
+  const [ error, setError ] = useState(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -23,9 +23,8 @@ const Header = () => {
         setLoading(false);
       }
     };
-    if (testId) fetchData(); // Fetch only if testId exists
+    if (testId) fetchData();
   }, [ testId ]);
-  
 
   const handleDeleteTest = async () => {
     if (window.confirm(`Are you sure you want to delete the test: ${test.name}?`)) {
@@ -33,13 +32,12 @@ const Header = () => {
         const response = await axios.delete(`/api/teacher/delete_test/${testId}`);
         if (response.data.message === "Test deleted successfully") {
           alert("Test deleted successfully");
-          // Optionally, you can redirect the user to another page after deletion.
-          window.location.href = "/dashboard"; // Redirect to dashboard or any other page
+          window.location.href = "/dashboard";
         } else {
           setError("Failed to delete the test");
         }
       } catch (err) {
-        setError("An error occurred while deleting the test");
+        setError("An error occurred while deleting the test",err.message);
       }
     }
   };
@@ -73,11 +71,11 @@ const Header = () => {
             </button>
             <ul className="absolute hidden group-hover:block bg-white shadow-lg p-3 right-0 mt-2 rounded-lg text-sm w-40">
               <li><a href="/profile" className="block px-4 py-2 hover:bg-gray-200">Profile</a></li>
-              <li><a href="/logout" className="block px-4 py-2 hover:bg-gray-200">Logout</a></li>
+              <li><a href="/" className="block px-4 py-2 hover:bg-gray-200">Logout</a></li>
               {user.isStaff && (
                 <li>
-                <button 
-                    onClick={handleDeleteTest} 
+                  <button
+                    onClick={handleDeleteTest}
                     className="block px-4 py-2 text-red-600 hover:bg-red-100">
                     Delete {test.name} <i className="bi bi-trash"></i>
                   </button>
@@ -92,10 +90,10 @@ const Header = () => {
 };
 
 const QuestionsList = () => {
-  const [questions, setQuestions] = useState([]);
+  const [ questions, setQuestions ] = useState([]);
   const { testId } = useParams();
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [ loading, setLoading ] = useState(true);
+  const [ error, setError ] = useState(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -113,23 +111,21 @@ const QuestionsList = () => {
       }
     };
     if (testId) fetchData();
-  }, [testId]);
+  }, [ testId ]);
 
   const handleDelete = async (qnId) => {
-    // Confirm the deletion
     if (window.confirm("Are you sure you want to delete this question?")) {
       try {
         const res = await axios.delete(`/api/teacher/delete_qn/${qnId}`);
         const data = res.data;
 
         if (data.message === "Question deleted successfully") {
-          // Remove the deleted question from the state
           setQuestions(questions.filter((q) => q._id !== qnId));
         } else {
           setError("Failed to delete the question");
         }
       } catch (error) {
-        setError("An error occurred while deleting the question");
+        setError("An error occurred while deleting the question",error.message);
       }
     }
   };

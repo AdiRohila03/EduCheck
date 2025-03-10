@@ -4,7 +4,6 @@ import axios from "axios";
 
 const UpdateTest = () => {
     const { testId } = useParams();
-    // console.log(testId);
     const [ formData, setFormData ] = useState({
         name: "",
         desc: "",
@@ -19,14 +18,10 @@ const UpdateTest = () => {
         const fetchTestData = async () => {
             try {
                 const response = await axios.get(`/api/teacher/view_test/${testId}`);
-                // console.log(response.data);
-
-                // Convert the ISO date string to the correct format "yyyy-MM-ddThh:mm"
                 const formatDate = (date) => {
                     const d = new Date(date);
-                    return d.toISOString().slice(0, 16); // Get the "yyyy-MM-ddThh:mm" format
+                    return d.toISOString().slice(0, 16); 
                 };
-
                 setFormData({
                     name: response.data.test.name,
                     desc: response.data.test.desc,
@@ -40,9 +35,8 @@ const UpdateTest = () => {
                 setLoading(false);
             }
         };
-
         fetchTestData();
-    }, [testId]);
+    }, [ testId ]);
 
     const handleChange = (e) => {
         setFormData({ ...formData, [ e.target.name ]: e.target.value });
@@ -50,7 +44,6 @@ const UpdateTest = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        // console.log("Creating Test:", formData);
         try {
             const res = await fetch(`/api/teacher/update_test/${testId}`, {
                 method: "PUT",
@@ -61,8 +54,6 @@ const UpdateTest = () => {
             });
 
             const data = await res.json();
-            // console.log(data);
-
             if (data.success === false) {
                 return;
             }

@@ -5,7 +5,6 @@ import axios from "axios";
 const UpdateQuestion = () => {
     const { qnId } = useParams();
     const navigate = useNavigate();
-
     const [ formData, setFormData ] = useState({
         name: "",
         answer: "",
@@ -14,12 +13,11 @@ const UpdateQuestion = () => {
     const [ loading, setLoading ] = useState(true);
     const [ error, setError ] = useState(null);
 
-    // Fetch question data when component mounts
     useEffect(() => {
         const fetchQuestionData = async () => {
             try {
                 const response = await axios.get(`/api/teacher/view_qn/${qnId}`);
-                 setFormData({
+                setFormData({
                     name: response.data.qn.name,
                     answer: response.data.qn.answer,
                     max_score: response.data.qn.max_score,
@@ -31,7 +29,6 @@ const UpdateQuestion = () => {
                 setLoading(false);
             }
         };
-
         fetchQuestionData();
     }, [ qnId ]);
 
@@ -51,7 +48,6 @@ const UpdateQuestion = () => {
             });
 
             const data = await res.json();
-
             if (res.ok) {
                 navigate(`/view_test/${data.qn.test}`);
             } else {

@@ -39,7 +39,7 @@ const SignUp = () => {
       return;
     }
 
-    navigate("/login"); // This will now work correctly because Login is a separate page
+    navigate("/login");
   };
 
   return (

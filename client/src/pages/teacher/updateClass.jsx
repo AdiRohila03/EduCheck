@@ -14,13 +14,10 @@ export default function UpdateClass() {
     const [ loading, setLoading ] = useState(true);
     const [ error, setError ] = useState(null);
 
-    // Fetch class data when component mounts
     useEffect(() => {
         const fetchClassData = async () => {
             try {
                 const response = await axios.get(`/api/teacher/view_class/${classId}`);
-                // console.log(response.data);
-
                 setFormData({
                     name: response.data.room.name,
                     code: response.data.room.code,
@@ -33,7 +30,6 @@ export default function UpdateClass() {
                 setLoading(false);
             }
         };
-
         fetchClassData();
     }, [ classId ]);
 
@@ -54,7 +50,6 @@ export default function UpdateClass() {
             });
 
             const data = await res.json();
-
             if (res.ok) {
                 navigate(`/view_class/${classId}`);
             } else {
@@ -72,8 +67,6 @@ export default function UpdateClass() {
 
     return (
         <>
-
-            {/* Contact Section */}
             <section
                 id="contact"
                 className=" bg-gray-100 px-4 bg-cover bg-center min-h-screen flex justify-center items-center p-6"
@@ -123,9 +116,7 @@ export default function UpdateClass() {
                                 </div>
                             </form>
                         </div>
-                        {/* End Form */}
-
-                        {/* Extra content */}
+                        
                         <div>
                             <img src={onlineClass} alt="Online Class" className="rounded-lg shadow-md" />
                         </div>
