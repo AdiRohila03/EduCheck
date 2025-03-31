@@ -6,7 +6,7 @@ const TestTakenSchema = new mongoose.Schema({
   submittedAt: { type: Date, default: null },
   ml_score: { type: Number, default: 0 },
   actual_score: { type: Number, default: 0 },
-  status: { type: String, default: "not" }
+  status: { type: String, enum: ["done", "not"], default: "not" }
 });
 
 // Ensure a student can take a test only once

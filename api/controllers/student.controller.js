@@ -4,7 +4,6 @@ import { Test } from '../models/test.model.js';
 import { TestTaken } from '../models/testTaken.model.js';
 import { Answer } from '../models/answer.model.js';
 import { Question } from '../models/question.model.js';
-import natural from 'natural'; // A (NLP) library for Node.js
 import moment from 'moment';
 import paginate from '../utils/paginate.js';
 
@@ -43,6 +42,7 @@ export const attendTest = async (req, res) => {
         
         const questions = await Question.find({ test: req.params.testId });
         const questionArray = questions.map(question => ({
+            id: question._id,
             name: question.name,
             max_score: question.max_score,
         }));
@@ -59,34 +59,54 @@ export const attendTest = async (req, res) => {
 
 // Submit Test
 export const submitTest = async (req, res) => {
-    try {
-        const { answers } = req.body;
-        const test = await Test.findById(req.params.testId);
-        if (!test) return res.status(404).json({ message: "Test not found" });
-
-        let totalScore = 0;
-        const tokenizer = new natural.WordTokenizer();
-        const tfidf = new natural.TfIdf();
-
-        for (const ans of answers) {
-            const answerText = tokenizer.tokenize(ans.response.toLowerCase()).join(" ");
-            tfidf.addDocument(answerText);
-        }
-
-        for (let i = 0; i < answers.length; i++) {
-            let maxSimilarity = 0;
-            for (let j = 0; j < test.answers.length; j++) {
-                const similarity = natural.JaroWinklerDistance(answers[ i ].response, test.answers[ j ]);
-                maxSimilarity = Math.max(maxSimilarity, similarity);
-            }
-            totalScore += maxSimilarity * test.marksPerQuestion;
-        }
-
-        await TestTaken.create({ test: test._id, student: req.user._id, score: totalScore });
-        res.status(200).json({ message: "Test submitted successfully", score: totalScore });
-    } catch (error) {
-        res.status(500).json({ message: "Server error" });
+  try {
+    if (!req.files || req.files.length === 0) {
+      return res.status(400).send("No files uploaded.");
     }
+
+    const studentId = req.user._id; 
+    let questionIds;
+    try {
+        questionIds = JSON.parse(req.body.questionIds);
+        if (!Array.isArray(questionIds)) throw new Error("Invalid questionIds format.");
+    } catch (err) {
+        return res.status(400).json({ message: err.message });
+    }
+
+    if (questionIds.length !== req.files.length) {
+      return res.status(400).send("Mismatch between questions and uploaded files.");
+    }
+
+    const answerDocs = req.files.map((file, index) => ({
+      student: studentId,
+      question: questionIds[index],
+      answer_file: {
+        data: file.buffer,
+        contentType: file.mimetype,
+      },
+    }));
+
+      const savedAnswers = await Answer.insertMany(answerDocs);
+
+      if (savedAnswers) {
+        const testTakenExists = await TestTaken.findOneAndUpdate({
+              test: req.params.testId,
+              student: req.user._id
+          },
+            {
+                status: "done",
+                submittedAt: new Date()
+         },
+         { new: true }
+          );
+          await testTakenExists.save();
+    }
+
+    res.status(200).json({ message: "Files uploaded and answers saved.", answers: savedAnswers });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Error saving answers: " + err.message });
+  }
 };
 
 // Fetch Assigned Tests

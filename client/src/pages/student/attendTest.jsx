@@ -5,31 +5,27 @@ import axios from "axios";
 const TestPage = () => {
   const navigate = useNavigate();
   const { testId } = useParams();
-  const [ test, setTests ] = useState([]);
-  const [ questions, setQuestions ] = useState([]);
-  const [ timeLeft, setTimeLeft ] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
-  const [ loading, setLoading ] = useState(true);
-  const [ error, setError ] = useState(null);
+  const [test, setTest] = useState({});
+  const [questions, setQuestions] = useState([]);
+  const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [selectedFiles, setSelectedFiles] = useState({}); // Store selected files
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const response = await axios.get(`/api/student/attend_test/${testId}`);
         setQuestions(response.data.questions || []);
-        setTests(response.data.test || []);
+        setTest(response.data.test || {});
       } catch (err) {
-        if (err.response && err.response.status === 400) {
-          setError(err.response.data.message);
-        } else {
-          console.log("Error fetching data:", err.message);
-          setError("Failed to load data. Please try again");
-        }
+        setError(err.response?.data?.message || "Failed to load data. Please try again.");
       } finally {
         setLoading(false);
       }
     };
     if (testId) fetchData();
-  }, [ testId ]);
+  }, [testId]);
 
   useEffect(() => {
     if (!test.end_time) return;
@@ -53,7 +49,40 @@ const TestPage = () => {
 
     const timerInterval = setInterval(updateTimer, 1000);
     return () => clearInterval(timerInterval);
-  }, [ test.end_time, navigate ]);
+  }, [test.end_time, navigate]);
+
+  const handleFileChange = (e, questionId) => {
+    setSelectedFiles((prevFiles) => {
+      const newFiles = { ...prevFiles, [questionId]: e.target.files[0] };
+      return newFiles;
+    });
+  };
+  
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    const formData = new FormData();
+    const questionIds = [];
+
+    Object.entries(selectedFiles).forEach(([questionId, file]) => {
+      formData.append("files", file);
+      questionIds.push(questionId);
+    });
+    
+    formData.append("questionIds", JSON.stringify(questionIds));
+
+    try {
+       await axios.post(`/api/student/submit_test/${testId}`, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+
+      navigate(`/view_class/${test.belongs}`);
+    } catch (err) {
+      console.error("Error submitting test:", err.message);
+    }
+  };
 
   if (loading) return <div className="text-center mt-10">Loading...</div>;
   if (error) return <div className="text-center mt-10 text-red-500">{error}</div>;
@@ -73,26 +102,27 @@ const TestPage = () => {
           </div>
         </div>
         <div className="p-6">
-          <form onSubmit={() => navigate(`/view_class/${test.belongs}`)}>
+          <form onSubmit={handleSubmit}>
             {questions.map((q) => (
-              <div key={q.name} className="mb-6">
+              <div key={q.id} className="mb-6">
                 <div className="flex justify-between items-center">
                   <h5 className="text-xl font-semibold">{q.name}</h5>
                   <span className="text-lg font-semibold">Mks: {q.max_score}</span>
                 </div>
-                <textarea
-                  name={`${q._id}`}
-                  rows="3"
-                  placeholder="Your Answer"
+                <input
+                  type="file"
+                  name={`file-${q.id}`}
+                  accept="image/*, application/pdf"
                   required
                   className="w-full p-3 border rounded-lg shadow-sm focus:outline-none focus:ring focus:border-primary"
-                ></textarea>
+                  onChange={(e) => handleFileChange(e, q.id)}
+                />
               </div>
             ))}
             {questions.length === 0 ? (
               <>
                 <p className="text-2xl">No Questions Here</p>
-                <button type="return" className="bg-blue-500 text-white px-6 py-3 rounded-lg shadow-md hover:bg-secondary mt-4">
+                <button type="button" onClick={() => navigate(-1)} className="bg-blue-500 text-white px-6 py-3 rounded-lg shadow-md hover:bg-secondary mt-4">
                   Return
                 </button>
               </>
@@ -108,8 +138,4 @@ const TestPage = () => {
   );
 };
 
-const App = () => {
-  return <TestPage />;
-};
-
-export default App;
+export default TestPage;
