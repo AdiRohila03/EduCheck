@@ -57,7 +57,7 @@ const UpdateTest = () => {
             if (data.success === false) {
                 return;
             }
-            navigate(`/view_class/${testId}`);
+            navigate(`/view_test/${testId}`);
         } catch (error) {
             console.log(error.message);
         }

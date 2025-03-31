@@ -73,8 +73,15 @@ export const createTest = async (req, res) => {
 // Update test
 export const updateTest = async (req, res) => {
   try {
-    const { testId } = req.params; 
-    const test = await Test.findByIdAndUpdate(testId, req.body, { new: true });
+    const { testId } = req.params;
+    let updatedData = { ...req.body };
+
+    if (req.body.end_time) {
+      const endTime = new Date(req.body.end_time);
+      updatedData.status = Date.now() < endTime ? "assigned" : "late";
+    }
+
+    const test = await Test.findByIdAndUpdate(testId, updatedData, { new: true });
     if (!test) {
       return res.status(404).json({ message: "Test not found" });
     }
