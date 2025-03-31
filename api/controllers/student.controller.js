@@ -87,7 +87,6 @@ export const submitTest = async (req, res) => {
     }));
 
       const savedAnswers = await Answer.insertMany(answerDocs);
-
       if (savedAnswers) {
         const testTakenExists = await TestTaken.findOneAndUpdate({
               test: req.params.testId,

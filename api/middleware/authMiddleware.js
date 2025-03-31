@@ -1,27 +1,21 @@
 import jwt from "jsonwebtoken";
 import { User } from "../models/user.model.js";
 
-// Middleware to check if user is authenticated
 export const ensureAuthenticated = async (req, res, next) => {
   try {
-    
     const token = req.cookies.accessToken;
-    
     if (!token) {
-      
       return res.redirect("/login");
     }
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     req.user = await User.findById(decoded.id);
 
     if (!req.user) {
-
       return res.redirect("/login");
     }
       next();
   } catch (err) {
     console.log(err.message);
-    
     res.redirect("/login");
   }
 };
@@ -30,7 +24,7 @@ export const ensureAuthenticated = async (req, res, next) => {
 export const studentRequired = async (req, res, next) => {
   try {
     if (!req.user || req.user.isStaff) {
-      return res.redirect("/dashboard"); // Redirect if not a student
+      return res.redirect("/dashboard");
     }
     next();
   } catch (err) {
@@ -42,7 +36,7 @@ export const studentRequired = async (req, res, next) => {
 export const teacherRequired = async (req, res, next) => {
   try {
     if (!req.user || !req.user.isStaff) {
-      return res.redirect("/dashboard"); // Redirect if not a teacher
+      return res.redirect("/dashboard");
     }
     next();
   } catch (err) {

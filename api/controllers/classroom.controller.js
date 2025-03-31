@@ -12,7 +12,6 @@ import jwt from 'jsonwebtoken';
 export const dashboard = async (req, res) => {
   try {
     let blue = "bg-blue-300", orange = "bg-orange-300", green = "bg-green-300", red = "bg-red-300", pink = "bg-purple-300", purple = "bg-pink-300"
-
     const colors = [ blue, orange, green, red, purple, pink ];
     let rooms = [];
 
@@ -27,7 +26,6 @@ export const dashboard = async (req, res) => {
     rooms = rooms.map((room, index) => ({
       ...room.toObject(),
       color: colors[ index % colors.length ],
-      // delay: (index + 2) * 100,
     }));
 
     return res.status(200).json({
@@ -45,7 +43,6 @@ export const dashboard = async (req, res) => {
 // View Class
 export const viewClass = async (req, res) => {
   const classId = req.params.classId
-
   let tests = Test.find({ belongs: classId }).sort({ create_time: -1 });
 
   // Pagination
@@ -58,9 +55,6 @@ export const viewClass = async (req, res) => {
     await Promise.all(
       tests.map(async (t) => {
         let testTakenEntry = await TestTaken.findOne({ student: req.user._id, test: t._id });
-
-        // console.log(testTakenEntry.submittedAt);
-
         let newStatus;
         let newTestTakenStatus;
         const now = new Date();
@@ -77,20 +71,16 @@ export const viewClass = async (req, res) => {
           newStatus = "late";
         }
 
-        // Update status in Test model if changed
         if (t.status !== newStatus) {
           await Test.findByIdAndUpdate(t._id, { status: newStatus }, { new: true });
         }
         if (!testTakenEntry) {
-          // Create a new TestTaken entry if it doesn't exist
           testTakenEntry = new TestTaken({
             student: req.user._id,
             test: t._id,
             status: "not",
           });
-          // console.log("Creating new TestTaken entry:", testTakenEntry);
         } else if (testTakenEntry.status !== newTestTakenStatus) {
-          // Update status if changed
           testTakenEntry.status = newTestTakenStatus;
         }
         await testTakenEntry.save();
@@ -135,7 +125,6 @@ export const people = async (req, res) => {
 export const profile = async (req, res) => {
     try {
       const newUser = await User.findByIdAndUpdate(req.user._id, req.body, { new: true });
-  
       if (!newUser) {
         return res.status(404).json({ message: "Classroom not found" });
       }
@@ -155,19 +144,14 @@ export const passwordChange = async (req, res) => {
       return res.status(404).json({ success: false, message: "User not found" });
     }
 
-    // Compare old password with the stored password
     const isMatch = await bcrypt.compare(oldPassword, user.password);
     if (!isMatch) {
       return res.status(400).json({ success: false, message: "Old password is incorrect" });
     }
 
-    // Hash the new password
     const hashedPassword = await bcrypt.hash(newPassword, 10);
-
-    // Update the password in the database
     await User.findByIdAndUpdate(req.user._id, { password: hashedPassword });
 
-    // Respond with success
     return res.status(200).json({ success: true, message: "Password successfully updated!" });
   } catch (error) {
     console.error(error.message);
@@ -177,11 +161,9 @@ export const passwordChange = async (req, res) => {
 
 // Signup
 export const signup = async (req, res) => {
-
   try {
     const { name, email, password, isStaff } = req.body;
     if (await User.findOne({ email })) throw new Error("Email already exists");
-    // const hashedPassword = await bcrypt.hash(password, 10);
 
     const newUser = new User({ name, email, password, isStaff });
     await newUser.save();

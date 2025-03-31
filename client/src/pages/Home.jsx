@@ -13,7 +13,6 @@ const Home = () => {
 
   return (
     <>
-      {/* Header */}
       <header className="fixed top-0 w-full bg-white shadow-md py-4 px-6 flex justify-between items-center z-50">
         <div className="flex items-center">
           <img src={logo} alt="EduCheck Logo" className="h-10 mr-2" />
@@ -31,7 +30,6 @@ const Home = () => {
         </nav>
       </header>
 
-      {/* Hero Section */}
       <section id="home" className="flex items-center justify-center min-h-screen bg-gray-100 px-4">
         <div className="container mx-auto flex flex-col lg:flex-row items-center">
           <div className="w-full lg:w-1/2 text-center lg:text-left">
@@ -47,7 +45,6 @@ const Home = () => {
         </div>
       </section>
 
-      {/* About Section */}
       <section id="about" className="py-16 bg-white px-4">
         <div className="container mx-auto flex flex-col lg:flex-row items-center">
           <div className="w-full lg:w-1/2 text-center lg:text-left">
@@ -66,7 +63,6 @@ const Home = () => {
         </div>
       </section>
 
-      {/* Benefits Section */}
       <section id="benefits" className="py-16 bg-gray-100 px-4">
         <div className="container mx-auto text-center">
           <h2 className="text-lg text-blue-700 uppercase font-bold">Benefits of EduCheck</h2>
@@ -86,7 +82,6 @@ const Home = () => {
         </div>
       </section>
 
-      {/* Contact Section */}
       <section id="contact" className="py-16 bg-white px-4">
         <div className="container mx-auto text-center">
           <h2 className="text-lg text-blue-700 uppercase font-bold">Contact</h2>

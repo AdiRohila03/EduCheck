@@ -1,5 +1,5 @@
 import { useState } from "react";
-import axios from "axios"; // Import axios to send API requests
+import axios from "axios";
 
 const Password = () => {
   const [formData, setFormData] = useState({

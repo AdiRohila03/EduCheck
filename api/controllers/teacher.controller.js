@@ -11,7 +11,6 @@ export const createClassroom = async (req, res) => {
   try {
     const { name, desc, code } = req.body;
     const owner = req.user._id;
-
     const classroom = new Classroom({ owner, name, desc, code });
     await classroom.save();
 
@@ -27,7 +26,6 @@ export const updateClassroom = async (req, res) => {
     const { classId } = req.params;
     const room = await Classroom.findById(classId);
     const classroom = await Classroom.findByIdAndUpdate(classId, req.body, { new: true });
-
     if (!classroom) {
       return res.status(404).json({ message: "Classroom not found" });
     }
@@ -43,7 +41,6 @@ export const deleteClassroom = async (req, res) => {
   try {
     const { classId } = req.params;
     const classroom = await Classroom.findByIdAndDelete(classId);
-
     if (!classroom) {
       return res.status(404).json({ message: "Classroom not found" });
     }
@@ -59,18 +56,13 @@ export const createTest = async (req, res) => {
   try {
     const { name, desc, start_time, end_time } = req.body;
     const { classId } = req.params;
-    // console.log(classId);
-    
     const classroom = await Classroom.findById(classId);
-
     if (!classroom) {
       return res.status(404).json({ message: "Classroom not found" });
     }
 
     const test = new Test({ belongs: classId, name, desc, start_time, end_time });
     await test.save();
-    // console.log(test);
-    
 
     res.status(201).json({ message: "Test created successfully", test });
   } catch (error) {
@@ -83,7 +75,6 @@ export const updateTest = async (req, res) => {
   try {
     const { testId } = req.params; 
     const test = await Test.findByIdAndUpdate(testId, req.body, { new: true });
-
     if (!test) {
       return res.status(404).json({ message: "Test not found" });
     }
@@ -99,7 +90,6 @@ export const deleteTest = async (req, res) => {
   try {
     const { testId } = req.params;
     const test = await Test.findByIdAndDelete(testId);
-
     if (!test) {
       return res.status(404).json({ message: "Test not found" });
     }
@@ -138,7 +128,6 @@ export const createQuestion = async (req, res) => {
   try {
     const { name, answer, max_score } = req.body;
     const { testId } = req.params;
-
     const test = await Test.findById(testId);
     if (!test) {
       return res.status(404).json({ message: "Test not found" });
@@ -159,7 +148,6 @@ export const updateQuestion = async (req, res) => {
     const { qnId } = req.params;
     const qn = await Question.findById(qnId);
     const question = await Question.findByIdAndUpdate(qnId, req.body, { new: true });
-
     if (!question) {
       return res.status(404).json({ message: "Question not found" });
     }
@@ -175,7 +163,6 @@ export const deleteQuestion = async (req, res) => {
   try {
     const { qnId } = req.params;
     const question = await Question.findByIdAndDelete(qnId);
-
     if (!question) {
       return res.status(404).json({ message: "Question not found" });
     }

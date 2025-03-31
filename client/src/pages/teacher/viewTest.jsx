@@ -141,8 +141,6 @@ const QuestionsList = () => {
           {questions.map((q, index) => (
             <article key={q._id} className="p-6 bg-white shadow-md rounded-lg">
               <h5 className="text-lg font-semibold text-gray-800">{index + 1}. {q.name}</h5>
-
-              {/* Display answer if available */}
               {q.answer && (
                 <div className="text-sm text-gray-700 mt-2">
                   <strong>Answer:</strong> {q.answer}
