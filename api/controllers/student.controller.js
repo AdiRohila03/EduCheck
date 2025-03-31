@@ -79,6 +79,7 @@ export const submitTest = async (req, res) => {
 
     const answerDocs = req.files.map((file, index) => ({
       student: studentId,
+      test: req.params.testId,
       question: questionIds[index],
       answer_file: {
         data: file.buffer,
@@ -153,12 +154,42 @@ export const doneTests = async (req, res) => {
 // Review Test
 export const reviewTest = async (req, res) => {
     try {
+        const test = await Test.findById(req.params.testId);
         const testTaken = await TestTaken.findOne({ test: req.params.testId, student: req.user._id }).populate('test');
         if (!testTaken) return res.status(404).json({ message: "Test not found or not taken" });
 
-        const answers = await Answer.find({ testTaken: testTaken._id }).populate('question');
-        res.status(200).json({ testTaken, answers });
+        // Fetch all questions for the test
+        const questions = await Question.find({ test: req.params.testId });
+
+        // Fetch the answers for each question by the student
+        const answers = await Promise.all(questions.map(async (question) => {
+            const answer = await Answer.findOne({ 
+                test: req.params.testId, 
+                student: req.user._id, 
+                question: question._id 
+            }).populate('question');
+            
+            if (answer) {
+                return {
+                    question: question,
+                    answer: null,
+                    file: answer.answer_file ? answer.answer_file.toString('base64') : null, // Convert binary file to base64 if it exists
+                    actual_score: answer.actual_score,
+                    max_score: question.max_score
+                };
+            }
+            return {
+                question: question,
+                answer: null,
+                file: null,
+                actual_score: 0,
+                max_score: question.max_score
+            };
+        }));
+
+        res.status(200).json({ test, answers });
     } catch (error) {
+        console.error(error);
         res.status(500).json({ message: "Server error" });
     }
 };

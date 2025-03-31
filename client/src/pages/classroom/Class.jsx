@@ -5,11 +5,11 @@ import { useParams } from "react-router-dom";
 import { useSelector } from 'react-redux'
 
 const Header = () => {
-  const { classId } = useParams(); 
-  const [room, setRoom] = useState({});
-  const [user, setUser] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const { classId } = useParams();
+  const [ room, setRoom ] = useState({});
+  const [ user, setUser ] = useState([]);
+  const [ loading, setLoading ] = useState(true);
+  const [ error, setError ] = useState(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -24,8 +24,8 @@ const Header = () => {
         setLoading(false);
       }
     };
-    if (classId) fetchData(); 
-  }, [classId]);
+    if (classId) fetchData();
+  }, [ classId ]);
 
   if (loading) return <div className="text-center mt-10">Loading...</div>;
   if (error) return <div className="text-center mt-10 text-red-500">{error}</div>;
@@ -105,7 +105,7 @@ const formatDateTime = (isoString) => {
     hour: "2-digit",
     minute: "2-digit",
     second: "2-digit",
-    hour12: true, 
+    hour12: true,
   });
 };
 
@@ -122,18 +122,18 @@ const SortableItem = ({ item, index, status, Tstatus }) => {
           </a>
         ) : (
           status === "late" || status === "not" ? (
-          <span>{index}. {item.name}</span>
-        ) : (
-          <a href={`/attend_test/${item._id}`} className="text-primary hover:text-secondary transition">
-            {index}. {item.name}
-          </a>
-        ))}
+            <span>{index}. {item.name}</span>
+          ) : (
+            <a href={`/attend_test/${item._id}`} className="text-primary hover:text-secondary transition">
+              {index}. {item.name}
+            </a>
+          ))}
       </h2>
       <p className="text-gray-600 mt-2">{item.desc}</p>
       <p className={`mt-2 font-semibold ${displayStatus === "done" ? "text-green-500" :
-          displayStatus === "late" ? "text-red-500" :
-            displayStatus === "not" ? "text-yellow-500" :
-              "text-blue-700"
+        displayStatus === "late" ? "text-red-500" :
+          displayStatus === "not" ? "text-yellow-500" :
+            "text-blue-700"
         }`}>
         {displayStatus}
       </p>
@@ -141,6 +141,11 @@ const SortableItem = ({ item, index, status, Tstatus }) => {
         {item.start_time && <p><i className="bi bi-alarm"></i> Start time: {formatDateTime(item.start_time)}</p>}
         {item.end_time && <p><i className="bi bi-clock-history"></i> End time: {formatDateTime(item.end_time)}</p>}
       </div>
+      {displayStatus == "done" && (
+        <a href={`/review_test/${item._id}`} className="text-grey-400 text-lg font-semibold hover:text-secondary transition">
+          Review Test
+        </a>
+      )}
     </article>
   );
 };

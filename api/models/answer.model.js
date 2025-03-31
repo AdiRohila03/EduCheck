@@ -2,6 +2,7 @@ import mongoose from "mongoose";
 
 const AnswerSchema = new mongoose.Schema({
   student: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
+  test: { type: mongoose.Schema.Types.ObjectId, ref: "Test", required: true },
   question: { type: mongoose.Schema.Types.ObjectId, ref: "Question", required: true },
   answer_file: { 
     data: Buffer, 

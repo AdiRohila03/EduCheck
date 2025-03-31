@@ -42,7 +42,7 @@ export default function App() {
         {/* Student */}
         <Route path='/join_class' element={<JoinClass />} />
         <Route path='/attend_test/:testId' element={<AttendTest />} />
-        <Route path='/review_test/:id' element={<ReviewTest />} />
+        <Route path='/review_test/:testId' element={<ReviewTest />} />
         {/* Classroom */}
         <Route path='/dashboard' element={<Dashboard />} />
         <Route path='/view_class/:classId' element={<Class />} />

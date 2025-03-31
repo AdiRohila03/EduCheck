@@ -9,7 +9,11 @@ export default {
     "bg-red-300", "bg-purple-300", "bg-pink-300"
   ],
   theme: {
-    extend: {},
+    extend: {
+      fontFamily: {
+        poppins: ["Poppins", "sans-serif"],
+      },
+    },
   },
   plugins: [],
 }
