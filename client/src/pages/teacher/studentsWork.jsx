@@ -87,7 +87,7 @@ const StudentScores = ({ test, attendedStudents, missedStudents }) => {
 
         {selectedStudent ? (
           <div>
-            <h2 className="text-xl font-bold mt-4">{selectedStudent.name} Answers</h2>
+            <h2 className="text-xl font-bold mt-4">{selectedStudent.student.name} Answers</h2>
             {selectedStudent && selectedStudent.answers && selectedStudent.answers.length > 0 ? (
               selectedStudent.answers.map((answer, index) => (
                 <div key={index} className="mt-4 border p-4 bg-white shadow-md">
