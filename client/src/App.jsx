@@ -33,7 +33,7 @@ export default function App() {
         {/* Teacher */}
         <Route path='/create_class' element={<ClassroomForm />} />
         <Route path='/update_class/:classId' element={<UpdateClass />} />
-        <Route path='/students_work' element={<StudentsWork />} />
+        <Route path='/students_work/:testId' element={<StudentsWork />} />
         <Route path='/create_qn/:testId' element={<CreateQuest />} />
         <Route path='/update_qn/:qnId' element={<UpdateQuest />} />
         <Route path='/create_test/:classId' element={<CreateTest />} />

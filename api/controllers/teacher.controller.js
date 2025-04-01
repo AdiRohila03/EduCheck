@@ -3,8 +3,8 @@ import { Test } from "../models/test.model.js";
 import { Question } from "../models/question.model.js";
 import { Answer } from "../models/answer.model.js";
 import { TestTaken } from "../models/testTaken.model.js";
-import { Enrollment } from "../models/enrollment.model.js";
-import { User } from "../models/user.model.js";
+// import { Enrollment } from "../models/enrollment.model.js";
+// import { User } from "../models/user.model.js";
 
 // Create a classroom
 export const createClassroom = async (req, res) => {
@@ -184,13 +184,54 @@ export const deleteQuestion = async (req, res) => {
 export const studentWork = async (req, res) => {
   try {
     const { testId } = req.params;
-    const enrolledStudents = await Enrollment.find({ test: testId }).populate("student");
+    const test = await Test.findById(testId);
+    
+    // Fetch all the questions related to the test
+    const questions = await Question.find({ test: testId }).select("name answer max_score");
+
+    // Fetch all test attempts for the given test
     const testTake = await TestTaken.find({ test: testId }).populate("student");
 
-    const attendedStudents = testTake.map(t => t.student);
-    const missedStudents = enrolledStudents.filter(e => !attendedStudents.includes(e.student));
+    // Separate students based on status
+    const attendedStudents = testTake.filter(t => t.status === "done").map(t => t.student);
+    const missedStudents = testTake.filter(t => t.status === "not").map(t => t.student);
 
-    res.json({ attendedStudents, missedStudents });
+    // Fetch answers for the students who attended the test, based on the testId and questions
+    const answers = await Answer.find({ 
+      test: testId, 
+      student: { $in: attendedStudents }, 
+      question: { $in: questions.map(q => q._id) } 
+    })
+      .populate("question")
+      .select("student question answer_file actual_score");
+
+    // Map questions for easy lookup
+    const questionMap = new Map(questions.map(q => [q._id.toString(), q]));
+
+    // Map answers to students with detailed question information
+    const studentAnswers = attendedStudents.map(student => {
+      const studentAnswersForTest = answers.filter(ans => ans.student.toString() === student._id.toString());
+
+      return {
+        student,
+        answers: studentAnswersForTest.map(studentAnswer => ({
+          question: questionMap.get(studentAnswer.question._id.toString()), // Get detailed question info
+          answer_file: studentAnswer.answer_file.data 
+            ? {
+                data: studentAnswer.answer_file.data.toString("base64"), // Convert to Base64
+                contentType: studentAnswer.answer_file.contentType
+              }
+            : null,
+          actual_score: studentAnswer.actual_score
+        }))
+      };
+    });
+
+    res.json({ 
+      attendedStudents: studentAnswers,
+      missedStudents,
+      test
+    });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }

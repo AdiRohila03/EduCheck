@@ -141,10 +141,16 @@ const SortableItem = ({ item, index, status, Tstatus }) => {
         {item.start_time && <p><i className="bi bi-alarm"></i> Start time: {formatDateTime(item.start_time)}</p>}
         {item.end_time && <p><i className="bi bi-clock-history"></i> End time: {formatDateTime(item.end_time)}</p>}
       </div>
-      {displayStatus == "done" && (
-        <a href={`/review_test/${item._id}`} className="text-grey-400 text-lg font-semibold hover:text-secondary transition">
+      {currentUser?.user.isStaff ? (
+        <a href={`/students_work/${item._id}`} className="text-grey-400 text-lg font-semibold hover:text-secondary transition">
           Review Test
         </a>
+      ) : (
+        displayStatus === "done" && (
+          <a href={`/review_test/${item._id}`} className="text-grey-400 text-lg font-semibold hover:text-secondary transition">
+            Review Test
+          </a>
+        )
       )}
     </article>
   );
