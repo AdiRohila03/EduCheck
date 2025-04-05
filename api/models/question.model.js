@@ -7,7 +7,6 @@ const QuestionSchema = new mongoose.Schema({
   max_score: { type: Number, default: 100 },
 });
 
-// Ensure maxScore is always positive
 QuestionSchema.pre("save", function (next) {
   if (this.max_score < 0) {
     return next(new Error("Maximum score cannot be negative"));

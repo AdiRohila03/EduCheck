@@ -10,7 +10,7 @@ const TestPage = () => {
   const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [selectedFiles, setSelectedFiles] = useState({}); // Store selected files
+  const [selectedFiles, setSelectedFiles] = useState({});
 
   useEffect(() => {
     const fetchData = async () => {

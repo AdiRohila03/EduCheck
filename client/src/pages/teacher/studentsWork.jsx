@@ -62,7 +62,6 @@ const StudentScores = () => {
     URL.revokeObjectURL(url);
   };
 
-  // Function to handle actual score update
   const handleScoreUpdate = async (event, studentId, questionId) => {
     event.preventDefault();
     const newScore = parseFloat(event.target.actualScore.value);
@@ -74,7 +73,6 @@ const StudentScores = () => {
         actual_score: newScore,
       });
 
-      // Update selectedStudent state
       setSelectedStudent((prev) => {
         const updatedAnswers = prev.answers.map((answer) =>
           answer.question._id === questionId
@@ -84,7 +82,6 @@ const StudentScores = () => {
         return { ...prev, answers: updatedAnswers };
       });
 
-      // Update attendedStudents list
       setAttendedStudents((prev) =>
         prev.map((student) => {
           if (student.student._id === studentId) {
@@ -142,9 +139,8 @@ const StudentScores = () => {
                     <td className="p-2">
                       <button
                         onClick={() => {
-                          // Store selected student in sessionStorage (optional, for smooth reload-based selection)
                           sessionStorage.setItem("selectedStudentId", student.student._id);
-                          window.location.reload(); // Reload the page to fetch fresh data
+                          window.location.reload(); 
                         }}
                         className="text-blue-600 hover:underline"
                       >
@@ -210,7 +206,6 @@ const StudentScores = () => {
                     </button>
                   )}
 
-                  {/* Updated Form */}
                   <form
                     className="flex items-center mt-2"
                     onSubmit={(e) => handleScoreUpdate(e, selectedStudent.student._id, answer.question._id)}

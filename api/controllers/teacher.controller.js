@@ -3,8 +3,6 @@ import { Test } from "../models/test.model.js";
 import { Question } from "../models/question.model.js";
 import { Answer } from "../models/answer.model.js";
 import { TestTaken } from "../models/testTaken.model.js";
-// import { Enrollment } from "../models/enrollment.model.js";
-// import { User } from "../models/user.model.js";
 
 // Create a classroom
 export const createClassroom = async (req, res) => {
@@ -60,7 +58,6 @@ export const createTest = async (req, res) => {
     if (!classroom) {
       return res.status(404).json({ message: "Classroom not found" });
     }
-
     const test = new Test({ belongs: classId, name, desc, start_time, end_time });
     await test.save();
 
@@ -80,7 +77,6 @@ export const updateTest = async (req, res) => {
       const endTime = new Date(req.body.end_time);
       updatedData.status = Date.now() < endTime ? "assigned" : "late";
     }
-
     const test = await Test.findByIdAndUpdate(testId, updatedData, { new: true });
     if (!test) {
       return res.status(404).json({ message: "Test not found" });
@@ -139,7 +135,6 @@ export const createQuestion = async (req, res) => {
     if (!test) {
       return res.status(404).json({ message: "Test not found" });
     }
-
     const question = new Question({ test: testId, name, answer, max_score });
     await question.save();
 
@@ -185,18 +180,11 @@ export const studentWork = async (req, res) => {
   try {
     const { testId } = req.params;
     const test = await Test.findById(testId);
-    
-    // Fetch all the questions related to the test
     const questions = await Question.find({ test: testId }).select("name answer max_score");
-
-    // Fetch all test attempts for the given test
     const testTake = await TestTaken.find({ test: testId }).populate("student");
-
-    // Separate students based on status
     const attendedStudents = testTake.filter(t => t.status === "done").map(t => t.student);
     const missedStudents = testTake.filter(t => t.status === "not").map(t => t.student);
 
-    // Fetch answers for the students who attended the test, based on the testId and questions
     const answers = await Answer.find({ 
       test: testId, 
       student: { $in: attendedStudents }, 
@@ -205,20 +193,17 @@ export const studentWork = async (req, res) => {
       .populate("question")
       .select("student question answer_file actual_score");
 
-    // Map questions for easy lookup
     const questionMap = new Map(questions.map(q => [q._id.toString(), q]));
-
-    // Map answers to students with detailed question information
     const studentAnswers = attendedStudents.map(student => {
-      const studentAnswersForTest = answers.filter(ans => ans.student.toString() === student._id.toString());
+    const studentAnswersForTest = answers.filter(ans => ans.student.toString() === student._id.toString());
 
       return {
         student,
         answers: studentAnswersForTest.map(studentAnswer => ({
-          question: questionMap.get(studentAnswer.question._id.toString()), // Get detailed question info
+          question: questionMap.get(studentAnswer.question._id.toString()),
           answer_file: studentAnswer.answer_file.data 
             ? {
-                data: studentAnswer.answer_file.data.toString("base64"), // Convert to Base64
+                data: studentAnswer.answer_file.data.toString("base64"), 
                 contentType: studentAnswer.answer_file.contentType
               }
             : null,
@@ -240,14 +225,10 @@ export const studentWork = async (req, res) => {
 // Update test work
 export const updateWork = async (req, res) => {
   try {
-    const { studentId, questionId, actual_score } = req.body; // Extract from request body
-
-    // Ensure required fields are present
+    const { studentId, questionId, actual_score } = req.body;
     if (!studentId || !questionId) {
       return res.status(400).json({ error: "Student ID and Question ID are required" });
     }
-
-    // Find the answer for the specific student and question
     const answer = await Answer.findOne({ 
       student: studentId, 
       question: questionId 
@@ -256,13 +237,9 @@ export const updateWork = async (req, res) => {
     if (!answer) {
       return res.status(404).json({ error: "Answer not found for this student and question" });
     }
-
-    // Ensure actual_score is within a valid range
     if (actual_score < -1 || actual_score > answer.question.max_score) {
       return res.status(400).json({ error: "Invalid score value" });
     }
-
-    // Update the actual score
     answer.actual_score = actual_score;
     await answer.save();
 

@@ -7,7 +7,6 @@ import { TestTaken } from "../models/testTaken.model.js";
 import { compareAsc } from "date-fns";
 import jwt from 'jsonwebtoken';
 
-
 // Dashboard
 export const dashboard = async (req, res) => {
   try {
@@ -44,8 +43,6 @@ export const dashboard = async (req, res) => {
 export const viewClass = async (req, res) => {
   const classId = req.params.classId
   let tests = Test.find({ belongs: classId }).sort({ create_time: -1 });
-
-  // Pagination
   const page = parseInt(req.query.page) || 1;
   const limit = 5;
   const totalTests = await Test.countDocuments({ belongs: classId });
@@ -143,12 +140,10 @@ export const passwordChange = async (req, res) => {
     if (!user) {
       return res.status(404).json({ success: false, message: "User not found" });
     }
-
     const isMatch = await bcrypt.compare(oldPassword, user.password);
     if (!isMatch) {
       return res.status(400).json({ success: false, message: "Old password is incorrect" });
     }
-
     const hashedPassword = await bcrypt.hash(newPassword, 10);
     await User.findByIdAndUpdate(req.user._id, { password: hashedPassword });
 
@@ -164,7 +159,6 @@ export const signup = async (req, res) => {
   try {
     const { name, email, password, isStaff } = req.body;
     if (await User.findOne({ email })) throw new Error("Email already exists");
-
     const newUser = new User({ name, email, password, isStaff });
     await newUser.save();
 
@@ -173,7 +167,6 @@ export const signup = async (req, res) => {
       message: "User created successfully",
       user: newUser,
     });
-
   } catch (error) {
     req.flash("error", error.message);
   }
@@ -184,10 +177,8 @@ export const login = async (req, res) => {
   try {
     const { email, password } = req.body;
     const user = await User.findOne({ email });
-
     if (!user || !(await bcrypt.compare(password, user.password))) throw new Error("Username or password incorrect");
     req.session.user = user;
-
     const accessToken = jwt.sign({ id: user._id }, process.env.JWT_SECRET)
 
     return res

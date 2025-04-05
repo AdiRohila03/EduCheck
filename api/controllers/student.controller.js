@@ -30,16 +30,13 @@ export const joinClassroom = async (req, res) => {
 export const attendTest = async (req, res) => {
     try {
         const test = await Test.findById(req.params.testId);
-        
         if (!test) {
             return res.status(404).json({ message: "Test not found" });
         }
-        
         const testTaken = await TestTaken.findOne({ test: req.params.testId, student: req.user._id });
         if (testTaken.status == "done") {
             return res.status(400).json({ message: "You have already taken this test" });
         }
-        
         const questions = await Question.find({ test: req.params.testId });
         const questionArray = questions.map(question => ({
             id: question._id,
@@ -63,7 +60,6 @@ export const submitTest = async (req, res) => {
     if (!req.files || req.files.length === 0) {
       return res.status(400).send("No files uploaded.");
     }
-
     const studentId = req.user._id; 
     let questionIds;
     try {
@@ -157,11 +153,8 @@ export const reviewTest = async (req, res) => {
         const test = await Test.findById(req.params.testId);
         const testTaken = await TestTaken.findOne({ test: req.params.testId, student: req.user._id }).populate('test');
         if (!testTaken) return res.status(404).json({ message: "Test not found or not taken" });
-
-        // Fetch all questions for the test
         const questions = await Question.find({ test: req.params.testId });
 
-        // Fetch the answers for each question by the student
         const answers = await Promise.all(questions.map(async (question) => {
             const answer = await Answer.findOne({ 
                 test: req.params.testId, 
@@ -173,7 +166,7 @@ export const reviewTest = async (req, res) => {
                 return {
                     question: question,
                     answer: null,
-                    file: answer.answer_file ? answer.answer_file.toString('base64') : null, // Convert binary file to base64 if it exists
+                    file: answer.answer_file ? answer.answer_file.toString('base64') : null,
                     actual_score: answer.actual_score,
                     max_score: question.max_score
                 };
@@ -193,18 +186,3 @@ export const reviewTest = async (req, res) => {
         res.status(500).json({ message: "Server error" });
     }
 };
-
-
-// Create a testTaken route
-// export const testTaken = async (req, res) => {
-//     try {
-//       const { test, student, submittedAt, ml_score, actual_score, status } = req.body;
-  
-//       const testTaken = new TestTaken({ test, student, submittedAt, ml_score, actual_score, status });
-//       await testTaken.save();
-  
-//       res.status(201).json({ message: "Test created successfully", testTaken });
-//     } catch (error) {
-//       res.status(500).json({ error: error.message });
-//     }
-//   };
