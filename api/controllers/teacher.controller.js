@@ -237,83 +237,40 @@ export const studentWork = async (req, res) => {
   }
 };
 
-// Fetch student's indivisual test work
-export const individualWork = async (req, res) => {
-  try {
-    const { test_id, student_id } = req.params;
-
-    const test = await Test.findById(test_id);
-    if (!test) return res.status(404).json({ message: 'Test not found' });
-
-    const enrolledStudents = await Enrollment.find({ room: test.belongs }).select('student');
-    const attendedStudents = await TestTaken.find({ test: test_id }).select('student');
-
-    const missedStudents = enrolledStudents
-      .filter(s => !attendedStudents.some(a => a.student.equals(s.student)))
-      .map(s => s.student);
-
-    const attendedUsers = await User.find({ _id: { $in: attendedStudents.map(a => a.student) } });
-    const missedUsers = await User.find({ _id: { $in: missedStudents } });
-
-    for (let student of attendedUsers) {
-      const testRecord = await TestTaken.findOne({ test: test_id, student: student._id });
-      student.ml_score = testRecord?.ml_score || 0;
-      student.actual_score = testRecord?.actual_score || 0;
-    }
-
-    let maxScore = 0;
-    const questions = await Question.find({ test: test_id });
-    const student = await User.findById(student_id);
-    if (!student) return res.status(404).json({ message: 'Student not found' });
-
-    const answers = [];
-    for (let q of questions) {
-      const answer = await Answer.findOne({ student: student_id, question: q._id });
-      answers.push({ qns: q, ans: answer });
-      maxScore += q.max_score;
-    }
-
-    test.max_score = maxScore;
-
-    return res.render('teachers/students_work', {
-      ans: answers,
-      test,
-      student,
-      attended_s: attendedUsers,
-      missed_s: missedUsers
-    });
-
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: 'Server error' });
-  }
-};
-
 // Update test work
 export const updateWork = async (req, res) => {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    return res.status(400).json({ errors: errors.array() });
-  }
-
   try {
-    const { studentId, qnId } = req.params;
-    const { actual_score } = req.body;
+    const { studentId, questionId, actual_score } = req.body; // Extract from request body
 
-    const answer = await Answer.findOne({ student: studentId, question: qnId });
-    if (!answer) return res.status(404).json({ error: "Answer not found" });
+    // Ensure required fields are present
+    if (!studentId || !questionId) {
+      return res.status(400).json({ error: "Student ID and Question ID are required" });
+    }
 
-    const testTake = await TestTaken.findOne({ student: studentId, test: answer.test });
-    if (!testTake) return res.status(404).json({ error: "Test record not found" });
+    // Find the answer for the specific student and question
+    const answer = await Answer.findOne({ 
+      student: studentId, 
+      question: questionId 
+    });
 
-    testTake.actual_score -= answer.actual_score;
-    testTake.actual_score += actual_score;
+    if (!answer) {
+      return res.status(404).json({ error: "Answer not found for this student and question" });
+    }
+
+    // Ensure actual_score is within a valid range
+    if (actual_score < -1 || actual_score > answer.question.max_score) {
+      return res.status(400).json({ error: "Invalid score value" });
+    }
+
+    // Update the actual score
     answer.actual_score = actual_score;
-
     await answer.save();
-    await testTake.save();
 
-    res.json({ message: "Score updated successfully" });
+    res.json({
+      message: "Score updated successfully",
+      updatedAnswer: answer,
+    });
+
   } catch (err) {
     res.status(500).json({ error: err.message });
   }

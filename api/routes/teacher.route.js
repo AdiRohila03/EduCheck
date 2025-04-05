@@ -13,7 +13,6 @@ import {
   updateQuestion,
   deleteQuestion,
   studentWork,
-  individualWork,
   updateWork
 } from "../controllers/teacher.controller.js";
 
@@ -39,8 +38,7 @@ router.delete("/delete_qn/:qnId", ensureAuthenticated, teacherRequired, deleteQu
 
 // Student_Work routes
 router.get("/students_work/:testId", ensureAuthenticated, teacherRequired, studentWork);
-router.get('/individual_work/:test_id/:student_id', ensureAuthenticated, teacherRequired, individualWork);
-router.post("/update_work/:studentId/:qnId", ensureAuthenticated, teacherRequired, [
+router.patch("/update_work", ensureAuthenticated, teacherRequired, [
   body("actual_score").isNumeric().withMessage("Score must be a number")
 ], updateWork);
 
